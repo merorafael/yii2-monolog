@@ -1,0 +1,28 @@
+{
+  "name": "merorafael/yii2-monolog",
+  "description": "Fixture generator. The Faker integration for the Yii framework.",
+  "keywords": ["yii2", "monolog", "logger"],
+  "type": "yii2-extension",
+  "license": "BSD-3-Clause",
+  "support": {
+    "issues": "https://github.com/merorafael/yii2-monolog/issues"
+  },
+  "authors": [
+    {
+      "name": "Rafael Mello",
+      "email": "merorafael@gmail.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "*",
+    "monolog/monolog": "^1.20"
+  },
+  "autoload": {
+    "psr-4": { "yii\\monolog\\": "" }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
+  }
+}
