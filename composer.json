@@ -1,6 +1,6 @@
 {
   "name": "merorafael/yii2-monolog",
-  "description": "Fixture generator. The Faker integration for the Yii framework.",
+  "description": "The Monolog integration for the Yii framework.",
   "keywords": ["yii2", "monolog", "logger"],
   "type": "yii2-extension",
   "license": "BSD-3-Clause",
