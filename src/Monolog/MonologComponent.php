@@ -31,7 +31,11 @@ class MonologComponent extends Component
             $processors = [];
             if (!empty($logger['handler']) && is_array($logger['handler'])) {
                 foreach ($logger['handler'] as &$handlerConfig) {
-                    $handlers[] = $this->createHandlerInstance($handlerConfig);
+                    $handler = $this->createHandlerInstance($handlerConfig);
+                    if ($handlerConfig['formatter'] instanceof FormatterInterface) {
+                        $handler->setFormatter($handler);
+                    }
+                    $handlers = $handler;
                 }
             }
             $logger = new Logger($name, $handlers, $processors);
@@ -46,9 +50,6 @@ class MonologComponent extends Component
                     throw new InsufficientParametersException();
                 }
                 $handler = new StreamHandler($config['path'], $config['level']);
-                if (isset($config['formatter']) && ($config['formater'] instanceof FormatterInterface)) {
-                    $handler->setFormatter($config['formater']);
-                }
 
                 return $handler;
         }
