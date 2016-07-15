@@ -8,13 +8,13 @@ The preferred way to install this extension is through [composer](https://getcom
 Either run
 
 ```
-php composer.phar require merorafael/yii2-monolog
+php composer.phar require mero/yii2-monolog
 ```
 
 or add
 
 ```json
-"merorafael/yii2-monolog": "~1.0.0"
+"mero/yii2-monolog": "~1.0.0"
 ```
 
 to the require section of your composer.json.
@@ -26,10 +26,21 @@ return [
     //....
     'components' => [
         'monolog' => [
-            'class' => 'yii\monolog\Logger',
-            'handlers' => [
-            ]
+            'class' => 'Mero\Yii\Monolog\MonologComponent',
+            'loggers' => [
+                'main' => [
+                    'handler' => [
+                        [
+                            'type' => \Monolog\Handler\StreamHandler::class,
+                            'path' => __DIR__.'/../runtime/logs/system.log',
+                            'level' => \Monolog\Logger::DEBUG
+                        ]
+                    ],
+                    'processor' => [],
+                ],
+            ],
         ],
-    ]
+    ],
+    //....
 ];
 ```
