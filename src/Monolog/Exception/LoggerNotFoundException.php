@@ -1,6 +1,6 @@
 <?php
 
-namespace Mero\Yii\Monolog\Exception;
+namespace Mero\Monolog\Exception;
 
 class LoggerNotFoundException extends \Exception
 {

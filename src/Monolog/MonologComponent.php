@@ -1,9 +1,9 @@
 <?php
 
-namespace Mero\Yii\Monolog;
+namespace Mero\Monolog;
 
-use Mero\Yii\Monolog\Exception\InsufficientParametersException;
-use Mero\Yii\Monolog\Exception\LoggerNotFoundException;
+use Mero\Monolog\Exception\InsufficientParametersException;
+use Mero\Monolog\Exception\LoggerNotFoundException;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\StreamHandler;
 use yii\base\Component;
