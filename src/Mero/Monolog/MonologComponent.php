@@ -9,13 +9,18 @@ use Monolog\Handler\StreamHandler;
 use yii\base\Component;
 use Monolog\Logger;
 
+/**
+ * MonologComponent is an component for the Monolog library.
+ *
+ * @author Rafael Mello <merorafael@gmail.com>
+ */
 class MonologComponent extends Component
 {
 
     /**
      * @var array Loggers
      */
-    private $loggers;
+    protected $loggers;
 
     /**
      * @inheritDoc
@@ -47,17 +52,42 @@ class MonologComponent extends Component
 
     private function createHandlerInstance($config)
     {
+        if (!isset($config['level'])) {
+            $config['level'] = Logger::DEBUG;
+        }
+        $config['level'] = $this->levelToMonologConst($config['level']);
+        if (!isset($config['type'])) {
+            throw new InsufficientParametersException('Type not found');
+        }
         switch ($config['type']) {
-            case StreamHandler::class:
-                if (!isset($config['path']) && !isset($config['level'])) {
-                    throw new InsufficientParametersException();
+            case 'stream':
+                if (!isset($config['path'])) {
+                    throw new InsufficientParametersException('Path not found');
                 }
-                $handler = new StreamHandler($config['path'], $config['level']);
+                if (!isset($config['bubble'])) {
+                    $config['bubble'] = true;
+                }
+                $handler = new StreamHandler($config['path'], $config['level'], $config['bubble']);
 
                 return $handler;
-        }
+            default:
 
-        return;
+                return;
+        }
+    }
+
+    /**
+     * Translate logger level to monolog constant value.
+     *
+     * @param string $level Logger level
+     *
+     * @return int Monolog constant value
+     */
+    protected function levelToMonologConst($level)
+    {
+        return is_int($level)
+            ? $level
+            : constant('Monolog\Logger::'.strtoupper($level));
     }
 
     public function getLogger($name = 'main')

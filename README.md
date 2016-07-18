@@ -31,9 +31,9 @@ return [
                 'main' => [
                     'handler' => [
                         [
-                            'type' => \Monolog\Handler\StreamHandler::class,
+                            'type' => 'stream',
                             'path' => __DIR__.'/../runtime/logs/system.log',
-                            'level' => \Monolog\Logger::DEBUG
+                            'level' => 'debug'
                         ]
                     ],
                     'processor' => [],
