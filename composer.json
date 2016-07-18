@@ -1,7 +1,7 @@
 {
   "name": "mero/yii2-monolog",
   "description": "The Monolog integration for the Yii framework.",
-  "keywords": ["yii2", "monolog", "logger"],
+  "keywords": ["yii2", "monolog", "logging", "log"],
   "type": "yii2-extension",
   "license": "MIT",
   "support": {

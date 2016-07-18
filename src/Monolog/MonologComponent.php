@@ -33,10 +33,13 @@ class MonologComponent extends Component
                 foreach ($logger['handler'] as &$handlerConfig) {
                     $handler = $this->createHandlerInstance($handlerConfig);
                     if ($handlerConfig['formatter'] instanceof FormatterInterface) {
-                        $handler->setFormatter($handler);
+                        $handler->setFormatter($handlerConfig['formatter']);
                     }
-                    $handlers = $handler;
+                    $handlers[] = $handler;
                 }
+            }
+            if (!empty($logger['processor']) && is_array($logger['processor'])) {
+                $processors = $logger['processor'];
             }
             $logger = new Logger($name, $handlers, $processors);
         }
