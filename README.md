@@ -13,8 +13,8 @@ php composer.phar require mero/yii2-monolog
 
 or add
 
-```json
-"mero/yii2-monolog": "~1.0.0"
+```
+"mero/yii2-monolog": "dev-master"
 ```
 
 to the require section of your composer.json.
@@ -26,20 +26,47 @@ return [
     //....
     'components' => [
         'monolog' => [
-            'class' => 'Mero\Yii\Monolog\MonologComponent',
+            'class' => \Mero\Monolog\MonologComponent::class,
             'loggers' => [
                 'main' => [
                     'handler' => [
-                        [
-                            'type' => 'stream',
-                            'path' => __DIR__.'/../runtime/logs/system.log',
-                            'level' => 'debug'
-                        ]
+                        //Handler object or array configuration
                     ],
                     'processor' => [],
                 ],
             ],
         ],
+    ],
+    //....
+];
+```
+
+#### Handler configuration using object
+
+```php
+return [
+    //....
+    'handler' => [
+        new \Monolog\Handler\StreamHandler(
+            __DIR__.'/../runtime/logs/system.log',
+            \Monolog\Logger::DEBUG
+        )
+    ],
+    //....
+];
+```
+
+#### Handler configuration using array
+
+```php
+return [
+    //....
+    'handler' => [
+        [
+            'type' => 'stream',
+            'path' => __DIR__.'/../runtime/logs/system.log',
+            'level' => 'debug'
+        ]
     ],
     //....
 ];
