@@ -27,7 +27,7 @@ return [
     'components' => [
         'monolog' => [
             'class' => \Mero\Monolog\MonologComponent::class,
-            'loggers' => [
+            'channels' => [
                 'main' => [
                     'handler' => [
                         //Handler object or array configuration
@@ -36,21 +36,6 @@ return [
                 ],
             ],
         ],
-    ],
-    //....
-];
-```
-
-#### Handler configuration using object
-
-```php
-return [
-    //....
-    'handler' => [
-        new \Monolog\Handler\StreamHandler(
-            __DIR__.'/../runtime/logs/system.log',
-            \Monolog\Logger::DEBUG
-        )
     ],
     //....
 ];
@@ -67,6 +52,21 @@ return [
             'path' => __DIR__.'/../runtime/logs/system.log',
             'level' => 'debug'
         ]
+    ],
+    //....
+];
+```
+
+#### Handler configuration using object
+
+```php
+return [
+    //....
+    'handler' => [
+        new \Monolog\Handler\StreamHandler(
+            __DIR__.'/../runtime/logs/system.log',
+            \Monolog\Logger::DEBUG
+        )
     ],
     //....
 ];

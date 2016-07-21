@@ -25,9 +25,9 @@ class MonologComponent extends Component
 {
 
     /**
-     * @var array Loggers
+     * @var array Channels
      */
-    protected $loggers;
+    protected $channels;
 
     /**
      * @inheritDoc
@@ -35,14 +35,14 @@ class MonologComponent extends Component
     public function init()
     {
         parent::init();
-        if (!isset($this->loggers['main'])) {
+        if (!isset($this->channels['main'])) {
             throw new LoggerNotFoundException(sprintf("Logger instance '%s' not found", 'main'));
         }
-        foreach ($this->loggers as $name => &$logger) {
+        foreach ($this->channels as $name => &$channel) {
             $handlers = [];
             $processors = [];
-            if (!empty($logger['handler']) && is_array($logger['handler'])) {
-                foreach ($logger['handler'] as &$handlerConfig) {
+            if (!empty($channel['handler']) && is_array($channel['handler'])) {
+                foreach ($channel['handler'] as &$handlerConfig) {
                     if (!is_array($handlerConfig) && !$handlerConfig instanceof AbstractHandler) {
                         throw new InvalidHandlerException();
                     }
@@ -57,10 +57,10 @@ class MonologComponent extends Component
                     $handlers[] = $handler;
                 }
             }
-            if (!empty($logger['processor']) && is_array($logger['processor'])) {
-                $processors = $logger['processor'];
+            if (!empty($channel['processor']) && is_array($channel['processor'])) {
+                $processors = $channel['processor'];
             }
-            $logger = new Logger($name, $handlers, $processors);
+            $channel = new Logger($name, $handlers, $processors);
         }
     }
 
@@ -189,7 +189,7 @@ class MonologComponent extends Component
      */
     public function hasLogger($name)
     {
-        return isset($this->loggers[$name]) && ($this->loggers[$name] instanceof Logger);
+        return isset($this->channels[$name]) && ($this->channels[$name] instanceof Logger);
     }
 
     /**
@@ -207,7 +207,7 @@ class MonologComponent extends Component
             throw new LoggerNotFoundException(sprintf("Logger instance '%s' not found", $name));
         }
 
-        return $this->loggers[$name];
+        return $this->channels[$name];
     }
 
 }
