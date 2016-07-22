@@ -12,14 +12,14 @@ class MonologTarget extends Target
 {
 
     /**
-     * @var MonologComponent
+     * @var MonologComponent Monolog component object
      */
     private $component;
 
     /**
-     * @var string Logger name
+     * @var string Monolog channel name
      */
-    public $loggerName = 'main';
+    public $channel = 'main';
 
     /**
      * @var array Interpret Yii 2 levels to Monolog levels
@@ -43,14 +43,14 @@ class MonologTarget extends Target
             throw new ComponentNotConfiguredException();
         }
         $this->component = Yii::$app->monolog;
-    }l
+    }
 
     /**
      * @inheritDoc
      */
     public function export()
     {
-        $logger = $this->component->getLogger($this->loggerName);
+        $logger = $this->component->getLogger($this->channel);
         foreach ($this->messages as $message) {
             list($text, $level, $category, $timestamp) = $message;
             $logger->log(

@@ -49,7 +49,7 @@ return [
     'handler' => [
         [
             'type' => 'stream',
-            'path' => __DIR__.'/../runtime/logs/system.log',
+            'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
             'level' => 'debug'
         ]
     ],

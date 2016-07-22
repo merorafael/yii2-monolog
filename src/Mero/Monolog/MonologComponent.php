@@ -15,6 +15,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use yii\base\Component;
 use Monolog\Logger;
+use Yii;
 
 /**
  * MonologComponent is an component for the Monolog library.
@@ -36,7 +37,12 @@ class MonologComponent extends Component
     {
         parent::init();
         if (!isset($this->channels['main'])) {
-            throw new LoggerNotFoundException(sprintf("Logger instance '%s' not found", 'main'));
+            $this->channels['main'] = [
+                'handler' => [
+                    'type' => 'rotating_file',
+                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
+                ],
+            ];
         }
         foreach ($this->channels as $name => &$channel) {
             $handlers = [];
@@ -91,7 +97,7 @@ class MonologComponent extends Component
                     $config
                 );
 
-                return new StreamHandler($config['path'], $config['level'], $config['bubble']);
+                return new StreamHandler(Yii::getAlias($config['path']), $config['level'], $config['bubble']);
             case 'firephp':
                 $config = array_merge(
                     ['bubble' => true],
@@ -138,7 +144,7 @@ class MonologComponent extends Component
                     $config
                 );
                 $handler = new RotatingFileHandler(
-                    $config['path'],
+                    Yii::getAlias($config['path']),
                     $config['max_files'],
                     $config['level'],
                     $config['bubble'],
