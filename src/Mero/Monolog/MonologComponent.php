@@ -5,6 +5,7 @@ namespace Mero\Monolog;
 use Mero\Monolog\Exception\InsufficientParametersException;
 use Mero\Monolog\Exception\InvalidHandlerException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
+use Mero\Monolog\Handler\DatabaseHandler;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Handler\BrowserConsoleHandler;
@@ -87,9 +88,23 @@ class MonologComponent extends Component
             ? Logger::DEBUG
             : Logger::toMonologLevel($config['level']);
         switch ($config['type']) {
+            case 'database':
+                if (!isset($config['table'])) {
+                    throw new InsufficientParametersException("Database config 'table' has not been set");
+                }
+                $config = array_merge(
+                    ['bubble' => true],
+                    $config
+                );
+
+                return new DatabaseHandler(
+                    $config['table'],
+                    $config['level'],
+                    $config['bubble']
+                );
             case 'stream':
                 if (!isset($config['path'])) {
-                    throw new InsufficientParametersException();
+                    throw new InsufficientParametersException("Stream config 'path' has not been set");
                 }
                 $config = array_merge(
                     ['bubble' => true],
@@ -113,7 +128,7 @@ class MonologComponent extends Component
                 return new BrowserConsoleHandler($config['level'], $config['bubble']);
             case 'gelf':
                 if (!isset($config['publisher'])) {
-                    throw new InsufficientParametersException();
+                    throw new InsufficientParametersException("Gelf config 'publisher' has not been set");
                 }
                 $config = array_merge(
                     ['bubble' => true],
@@ -130,7 +145,7 @@ class MonologComponent extends Component
                 return new ChromePHPHandler($config['level'], $config['bubble']);
             case 'rotating_file':
                 if (!isset($config['path'])) {
-                    throw new InsufficientParametersException();
+                    throw new InsufficientParametersException("Rotating file config 'path' has not been set");
                 }
                 $config = array_merge(
                     [

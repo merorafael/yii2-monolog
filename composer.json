@@ -5,7 +5,8 @@
   "type": "yii2-extension",
   "license": "MIT",
   "support": {
-    "issues": "https://github.com/merorafael/yii2-monolog/issues"
+    "issues": "https://github.com/merorafael/yii2-monolog/issues",
+    "source": "https://github.com/merorafael/yii2-monolog"
   },
   "authors": [
     {
@@ -17,12 +18,15 @@
     "yiisoft/yii2": "*",
     "monolog/monolog": "^1.20"
   },
+  "suggest": {
+    "yiisoft/yii2-mongodb": "Allows log storage database MongoDB"
+  },
   "autoload": {
     "psr-4": { "Mero\\Monolog\\": "src/Monolog" }
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.0.x-dev"
+      "dev-master": "0.2.x-dev"
     }
   }
 }

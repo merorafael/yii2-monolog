@@ -118,6 +118,7 @@ return [
 
 **Handlers supported:**
 
+- database
 - stream
 - firephp
 - browser_console

@@ -1,13 +1,19 @@
 <?php
 
-namespace Mero\Monolog;
+namespace Mero\Monolog\Target;
 
 use Mero\Monolog\Exception\ComponentNotConfiguredException;
+use Mero\Monolog\MonologComponent;
 use Yii;
 use Monolog\Logger;
 use yii\log\Logger as YiiLogger;
 use yii\log\Target;
 
+/**
+ * MonologTarget send log messages to Monolog channel.
+ *
+ * @author Rafael Mello <merorafael@gmail.com>
+ */
 class MonologTarget extends Target
 {
     /**
