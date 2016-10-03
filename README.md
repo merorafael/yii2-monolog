@@ -6,7 +6,7 @@ Monolog for Yii 2
 [![Total Downloads](https://poser.pugx.org/mero/yii2-monolog/downloads.svg)](https://packagist.org/packages/mero/yii2-monolog) 
 [![License](https://poser.pugx.org/mero/yii2-monolog/license.svg)](https://packagist.org/packages/mero/yii2-monolog)
 
-The Monolog integration for the Yii framework.
+The [Monolog](https://github.com/Seldaek/monolog) integration for the Yii framework.
 
 Requirements
 ------------
