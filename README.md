@@ -1,7 +1,7 @@
 Monolog for Yii 2
 =================
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/4612cf8e-4579-4ad5-a2ca-8e4620da09c8/mini.png)](https://insight.sensiolabs.com/projects/4612cf8e-4579-4ad5-a2ca-8e4620da09c8)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/90e3c666-c1b8-4ab0-846e-413451bdc023/mini.png)](https://insight.sensiolabs.com/projects/90e3c666-c1b8-4ab0-846e-413451bdc023)
 [![Latest Stable Version](https://poser.pugx.org/mero/yii2-monolog/v/stable.svg)](https://packagist.org/packages/mero/yii2-monolog) 
 [![Total Downloads](https://poser.pugx.org/mero/yii2-monolog/downloads.svg)](https://packagist.org/packages/mero/yii2-monolog) 
 [![License](https://poser.pugx.org/mero/yii2-monolog/license.svg)](https://packagist.org/packages/mero/yii2-monolog)
@@ -94,7 +94,7 @@ Handlers
 
 You can add handlers in their channels using the array structure or object structure.
 
-#### Array structure
+### Array structure
 
 Using the array structure, you have a better readability of the configuration of their handlers.
 
@@ -125,7 +125,7 @@ return [
 - chromephp
 - rotating_file
 
-#### Object structure
+### Object structure
 
 Using the object structure, you will be informing instantiated objects already declared their respective handlers.
 
@@ -145,4 +145,3 @@ return [
 ```
 
 See the [official documentation](https://github.com/Seldaek/monolog/blob/master/doc/02-handlers-formatters-processors.md#handlers) of Monolog to see the handlers list.
-
