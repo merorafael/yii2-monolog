@@ -176,7 +176,7 @@ class ExampleController extends Controller
     /**
      * This action register "Hello world" in channel "channel1".
      */
-    public function actionSecoundExample()
+    public function actionSecondExample()
     {
         $monologComponent = Yii::app()->monolog;
         $logger = $monologComponent->getLogger("channel1");
