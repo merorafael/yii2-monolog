@@ -118,7 +118,7 @@ return [
 
 **Handlers supported:**
 
-- database
+- yii_db
 - stream
 - firephp
 - browser_console

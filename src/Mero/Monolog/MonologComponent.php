@@ -5,7 +5,7 @@ namespace Mero\Monolog;
 use Mero\Monolog\Exception\InsufficientParametersException;
 use Mero\Monolog\Exception\InvalidHandlerException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
-use Mero\Monolog\Handler\DatabaseHandler;
+use Mero\Monolog\Handler\YiiDbHandler;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Handler\BrowserConsoleHandler;
@@ -88,16 +88,16 @@ class MonologComponent extends Component
             ? Logger::DEBUG
             : Logger::toMonologLevel($config['level']);
         switch ($config['type']) {
-            case 'database':
+            case 'yii_db':
                 if (!isset($config['table'])) {
-                    throw new InsufficientParametersException("Database config 'table' has not been set");
+                    throw new InsufficientParametersException("YiiDb config 'table' has not been set");
                 }
                 $config = array_merge(
                     ['bubble' => true],
                     $config
                 );
 
-                return new DatabaseHandler(
+                return new YiiDbHandler(
                     $config['table'],
                     $config['level'],
                     $config['bubble']

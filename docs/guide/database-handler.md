@@ -1,7 +1,7 @@
-Database Handler
+YiiDb Handler
 ----------------
 
-`Mero\Monolog\Handler\DatabaseHandler` is responsible for storing logs in databases
+`Mero\Monolog\Handler\YiiDbHandler` is responsible for storing logs in databases
 using `yii\db\Connection` to communicate with the DBMS.
 
 ### Creating log table
@@ -19,7 +19,7 @@ you prefer.
 
 ### Configuring handler in Monolog Component
 
-To configure DatabaseHandler just instantiate the object in your handlers list of channel
+To configure YiiDbHandler just instantiate the object in your handlers list of channel
 wanted.
 
 **Example:**
@@ -30,7 +30,7 @@ return [
         'channels' => [
             'main' => [
                 'handler' => [
-                    new \Mero\Monolog\Handler\DatabaseHandler(
+                    new \Mero\Monolog\Handler\YiiDbHandler(
                         'table_name',
                         \Monolog\Logger::DEBUG
                     ),

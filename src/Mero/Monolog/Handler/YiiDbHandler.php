@@ -12,7 +12,7 @@ use yii\di\Instance;
  *
  * @author Rafael Mello <merorafael@gmail.com>
  */
-class DatabaseHandler extends AbstractProcessingHandler
+class YiiDbHandler extends AbstractProcessingHandler
 {
 
     /**
