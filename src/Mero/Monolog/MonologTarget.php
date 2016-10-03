@@ -10,7 +10,6 @@ use yii\log\Target;
 
 class MonologTarget extends Target
 {
-
     /**
      * @var MonologComponent Monolog component object
      */
@@ -34,7 +33,7 @@ class MonologTarget extends Target
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -46,18 +45,17 @@ class MonologTarget extends Target
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function export()
     {
         $logger = $this->component->getLogger($this->channel);
         foreach ($this->messages as $message) {
-            list($text, $level, $category, $timestamp) = $message;
+            list($text, $level, $category) = $message;
             $logger->log(
                 $this->monologLevels[$level],
                 "[$category] $text"
             );
         }
     }
-
 }

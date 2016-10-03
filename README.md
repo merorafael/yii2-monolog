@@ -145,3 +145,43 @@ return [
 ```
 
 See the [official documentation](https://github.com/Seldaek/monolog/blob/master/doc/02-handlers-formatters-processors.md#handlers) of Monolog to see the handlers list.
+
+Using Yii2 Monolog
+------------------
+
+To use Yii 2 Monolog simply call the method `getLogger` component informing which channel is used.
+
+**Example**
+
+```php
+namespace app\controllers;
+
+use Yii;
+use \yii\web\Controller;
+
+class ExampleController extends Controller
+{
+
+    /**
+     * This action register "Hello world" in channel 
+     * "main"(default when no value is setted on "getLogger" method).
+     */
+    public function actionFirstExample()
+    {
+        $monologComponent = Yii::app()->monolog;
+        $logger = $monologComponent->getLogger();
+        $logger->log('info', 'Hello world');
+    }
+
+    /**
+     * This action register "Hello world" in channel "channel1".
+     */
+    public function actionSecoundExample()
+    {
+        $monologComponent = Yii::app()->monolog;
+        $logger = $monologComponent->getLogger("channel1");
+        $logger->log('info', 'Hello world');
+    }
+    
+}
+```

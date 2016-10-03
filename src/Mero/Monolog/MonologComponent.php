@@ -24,14 +24,13 @@ use Yii;
  */
 class MonologComponent extends Component
 {
-
     /**
      * @var array Channels
      */
     protected $channels;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -215,5 +214,4 @@ class MonologComponent extends Component
 
         return $this->channels[$name];
     }
-
 }
