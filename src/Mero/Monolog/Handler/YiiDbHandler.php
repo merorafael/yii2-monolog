@@ -25,9 +25,10 @@ class YiiDbHandler extends AbstractProcessingHandler
      */
     protected $table;
 
-    public function __construct($table = 'logs', $level = Logger::ERROR, $bubble = true)
+    public function __construct(Connection $db, $table = 'logs', $level = Logger::ERROR, $bubble = true)
     {
-        $this->db = Instance::ensure($this->db, Connection::className());
+        $this->db = $db;
+        $this->table = $table;
         parent::__construct($level, $bubble);
     }
 
@@ -37,16 +38,17 @@ class YiiDbHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         $this->db->quoteTableName($this->table);
-        $command = $this->db->createCommand(
-            "INSERT INTO $this->table (channel, level, message, time) VALUES (:channel, :level, :message, :time)"
-        );
-        $command
-            ->bindValues([
-                'channel' => $record['channel'],
-                'level' => $record['level'],
-                'message' => $record['message'],
-                'time' => $record['datetime']->format('Y-m-d H:i:s')
-            ])
+        $this->db
+            ->createCommand()
+            ->insert(
+                $this->table,
+                [
+                    'channel' => $record['channel'],
+                    'level' => $record['level'],
+                    'message' => $record['message'],
+                    'time' => $record['datetime']->format('Y-m-d H:i:s'),
+                ]
+            )
             ->execute();
     }
 

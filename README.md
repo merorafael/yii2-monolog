@@ -118,13 +118,14 @@ return [
 
 **Handlers supported:**
 
-- yii_db
 - stream
 - firephp
 - browser_console
 - gelf
 - chromephp
 - rotating_file
+- yii_db
+- yii_mongo
 
 ### Object structure
 

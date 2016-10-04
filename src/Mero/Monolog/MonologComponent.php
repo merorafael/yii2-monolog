@@ -6,6 +6,7 @@ use Mero\Monolog\Exception\InsufficientParametersException;
 use Mero\Monolog\Exception\InvalidHandlerException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
 use Mero\Monolog\Handler\YiiDbHandler;
+use Mero\Monolog\Handler\YiiMongoHandler;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Handler\BrowserConsoleHandler;
@@ -17,6 +18,7 @@ use Monolog\Handler\StreamHandler;
 use yii\base\Component;
 use Monolog\Logger;
 use Yii;
+use yii\di\Instance;
 
 /**
  * MonologComponent is an component for the Monolog library.
@@ -88,20 +90,6 @@ class MonologComponent extends Component
             ? Logger::DEBUG
             : Logger::toMonologLevel($config['level']);
         switch ($config['type']) {
-            case 'yii_db':
-                if (!isset($config['table'])) {
-                    throw new InsufficientParametersException("YiiDb config 'table' has not been set");
-                }
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new YiiDbHandler(
-                    $config['table'],
-                    $config['level'],
-                    $config['bubble']
-                );
             case 'stream':
                 if (!isset($config['path'])) {
                     throw new InsufficientParametersException("Stream config 'path' has not been set");
@@ -167,7 +155,44 @@ class MonologComponent extends Component
                 $handler->setFilenameFormat($config['filename_format'], $config['date_format']);
 
                 return $handler;
-            case 'mongo':
+            case 'yii_db':
+                if (!isset($config['reference'])) {
+                    throw new InsufficientParametersException("Database config 'reference' has not been set");
+                }
+                $dbInstance = Instance::ensure($config['reference'], '\yii\db\Connection');
+                $config = array_merge(
+                    [
+                        'bubble' => true,
+                        'table' => 'logs'
+                    ],
+                    $config
+                );
+
+                return new YiiDbHandler(
+                    $dbInstance,
+                    $config['table'],
+                    $config['level'],
+                    $config['bubble']
+                );
+            case 'yii_mongo':
+                if (!isset($config['reference'])) {
+                    throw new InsufficientParametersException("Mongo config 'reference' has not been set");
+                }
+                $mongoInstance = Instance::ensure($config['reference'], '\yii\mongodb\Connection');
+                $config = array_merge(
+                    [
+                        'bubble' => true,
+                        'collection' => 'logs'
+                    ],
+                    $config
+                );
+
+                return new YiiMongoHandler(
+                    $mongoInstance,
+                    $config['collection'],
+                    $config['level'],
+                    $config['bubble']
+                );
             case 'elasticsearch':
             case 'fingers_crossed':
             case 'filter':

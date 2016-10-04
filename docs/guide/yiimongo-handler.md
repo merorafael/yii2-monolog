@@ -1,29 +1,20 @@
-YiiDbHandler
+YiiMongoHandler
+---------------
+
+`Mero\Monolog\Handler\YiiMongoHandler` é responsável por armazenar logs em bases de dados
+do MongoDB o `yii\mongodb\Connection` como client de comunicação.
+
+Dependências
 ------------
 
-`Mero\Monolog\Handler\YiiDbHandler` é responsável por armazenar logs em bases de dados
-relacionais utilizando o `yii\db\Connection` para de comunicar com o SGBD.
-
-Criando tabela de log
----------------------
-
-O YiiDbHandler não possui dependência relacionada a nome de tabela. Você poderá criar
-mais de uma tabela caso deseje, destinando cada uma a um channel diferente ou a estratégia
-que prefira.
-
-**Campos necessários:**
-
-- channel: VARCHAR(255)
-- level: INTEGER
-- message: LONGTEXT
-- time: DATETIME
+- [yiisoft/yii2-mongodb](https://github.com/yiisoft/yii2-mongodb)
 
 Configurando o handler no MonologComponent
 ------------------------------------------
 
 ### Configurando por objetos
 
-Para configurar o `YiiDbHandler` por objeto basta instanciar o objeto na sua lista de handlers do channel
+Para configurar o `YiiMongoHandler` por objeto basta instanciar o objeto na sua lista de handlers do channel
 desejado.
 
 **Exemplo:**
@@ -34,9 +25,9 @@ return [
         'channels' => [
             'main' => [
                 'handler' => [
-                    new \Mero\Monolog\Handler\YiiDbHandler(
-                        Yii::$app->db,
-                        'nome_tabela',
+                    new \Mero\Monolog\Handler\YiiMongoHandler(
+                        Yii::$app->mongodb,
+                        'nome_collection',
                         \Monolog\Logger::DEBUG
                     ),
                 ],
@@ -55,9 +46,9 @@ com a base e qual a collection que será utilizada.
 
 | Campo        | Descrição                                        |
 | ------------ | ------------------------------------------------ |
-| `type`       | Identificação do handler(`yii_db`)               |
+| `type`       | Identificação do handler(`yii_mongo`)            |
 | `reference`  | Nome da conexão do Yii2 que será utilizada       |
-| `table`      | Nome da tabela no banco de dados                 |
+| `collection` | Nome da collection no MongoDB                    |
 | `level`      | Identificação do level que será usado no Handler |
 
 **Exemplo:**
@@ -69,9 +60,9 @@ return [
             'main' => [
                 'handler' => [
                     [
-                        'type' => 'yii_db',
-                        'reference' => 'db',
-                        'table' => 'nome_tabela',
+                        'type' => 'yii_mongo',
+                        'reference' => 'mongodb',
+                        'collection' => 'nome_collection',
                         'level' => \Monolog\Logger::DEBUG
                     ],
                 ],

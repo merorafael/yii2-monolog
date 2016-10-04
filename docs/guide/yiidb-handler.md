@@ -1,28 +1,32 @@
-YiiDb Handler
-----------------
+YiiDbHandler
+------------
 
-`Mero\Monolog\Handler\YiiDbHandler` is responsible for storing logs in databases
-using `yii\db\Connection` to communicate with the DBMS.
+`Mero\Monolog\Handler\YiiDbHandler` é responsável por armazenar logs em bases de dados
+relacionais utilizando o `yii\db\Connection` para de comunicar com o SGBD.
 
-### Creating log table
+Criando tabela de log
+---------------------
 
-The DatabaseHandler not have dependency related table name. You can create
-more than one table if desired, assigning each to a different channel or strategy
-you prefer.
+O YiiDbHandler não possui dependência relacionada a nome de tabela. Você poderá criar
+mais de uma tabela caso deseje, destinando cada uma a um channel diferente ou a estratégia
+que prefira.
 
-**Required fields:**
+**Campos necessários:**
 
 - channel: VARCHAR(255)
 - level: INTEGER
 - message: LONGTEXT
 - time: DATETIME
 
-### Configuring handler in Monolog Component
+Configurando o handler no MonologComponent
+------------------------------------------
 
-To configure YiiDbHandler just instantiate the object in your handlers list of channel
-wanted.
+### Configurando por objetos
 
-**Example:**
+Para configurar o `YiiDbHandler` por objeto basta instanciar o objeto na sua lista de handlers do channel
+desejado.
+
+**Exemplo:**
 
 ```php
 return [
@@ -31,9 +35,45 @@ return [
             'main' => [
                 'handler' => [
                     new \Mero\Monolog\Handler\YiiDbHandler(
-                        'table_name',
+                        Yii::$app->db,
+                        'nome_tabela',
                         \Monolog\Logger::DEBUG
                     ),
+                ],
+                'processor' => [],
+            ],
+    //...
+];
+```
+
+### Configurando por array
+
+Para configurar o `YiiMongoHandler` por array é necessário declarar um array informando o nome da conexão
+com a base e qual a collection que será utilizada.
+
+**Estrutura do array:**
+
+| Campo        | Descrição                                        |
+| ------------ | ------------------------------------------------ |
+| `type`       | Identificação do handler(`yii_db`)               |
+| `reference`  | Nome da conexão do Yii2 que será utilizada       |
+| `table`      | Nome da tabela no banco de dados                 |
+| `level`      | Identificação do level que será usado no Handler |
+
+**Exemplo:**
+
+```php
+return [
+    //...
+        'channels' => [
+            'main' => [
+                'handler' => [
+                    [
+                        'type' => 'yii_db',
+                        'reference' => 'db',
+                        'table' => 'nome_tabela',
+                        'level' => \Monolog\Logger::DEBUG
+                    ],
                 ],
                 'processor' => [],
             ],
