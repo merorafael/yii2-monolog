@@ -7,9 +7,6 @@ cache:
         - $HOME/.composer/cache
 
 php:
-    - 5.4
-    - 5.5
-    - 5.6
     - 7.0
     - 7.1
     - nightly
@@ -23,11 +20,11 @@ matrix:
 
 before_install:
     - composer self-update
+    - pecl install -f mongodb
     - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - composer global require "fxp/composer-asset-plugin:^1.2.0"
 
 install:
+    - composer global require "fxp/composer-asset-plugin:^1.2.0"
     - composer install --prefer-dist
 
 script:

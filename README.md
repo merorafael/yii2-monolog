@@ -1,8 +1,8 @@
 Monolog for Yii 2
 =================
 
-[![Build Status](https://travis-ci.org/merorafael/yii2-monolog.svg?branch=master)](https://travis-ci.org/merorafael/yii2-monolog)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/90e3c666-c1b8-4ab0-846e-413451bdc023/mini.png)](https://insight.sensiolabs.com/projects/90e3c666-c1b8-4ab0-846e-413451bdc023)
+[![Build Status](https://travis-ci.org/merorafael/yii2-monolog.svg?branch=master)](https://travis-ci.org/merorafael/yii2-monolog)
 [![Latest Stable Version](https://poser.pugx.org/mero/yii2-monolog/v/stable.svg)](https://packagist.org/packages/mero/yii2-monolog) 
 [![Total Downloads](https://poser.pugx.org/mero/yii2-monolog/downloads.svg)](https://packagist.org/packages/mero/yii2-monolog) 
 [![License](https://poser.pugx.org/mero/yii2-monolog/license.svg)](https://packagist.org/packages/mero/yii2-monolog)
