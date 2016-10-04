@@ -21,7 +21,7 @@ que prefira.
 Configurando o handler no MonologComponent
 ------------------------------------------
 
-### Configurando por objetos
+### Configurando por objeto
 
 Para configurar o `YiiDbHandler` por objeto basta instanciar o objeto na sua lista de handlers do channel
 desejado.
