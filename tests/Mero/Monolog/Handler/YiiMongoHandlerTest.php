@@ -8,7 +8,7 @@ use Monolog\Logger;
 class YiiMongoHandlerTest extends TestCase
 {
     /**
-     * @expectedException \TypeError
+     * @expectedException \InvalidArgumentException
      */
     public function testConstructorInvalidConnection()
     {
