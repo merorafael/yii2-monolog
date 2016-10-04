@@ -22,7 +22,6 @@ matrix:
 before_install:
     - composer self-update
     - pecl install -f mongodb
-    - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
     - composer global require "fxp/composer-asset-plugin:^1.2.0"

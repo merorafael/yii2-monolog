@@ -23,8 +23,12 @@ class YiiDbHandler extends AbstractProcessingHandler
      */
     protected $table;
 
-    public function __construct(Connection $db, $table = 'logs', $level = Logger::ERROR, $bubble = true)
+    public function __construct($db, $table = 'logs', $level = Logger::ERROR, $bubble = true)
     {
+        if (!($db instanceof Connection)) {
+            throw new \InvalidArgumentException('\yii\db\Connection instance required');
+        }
+
         $this->db = $db;
         $this->table = $table;
         parent::__construct($level, $bubble);
