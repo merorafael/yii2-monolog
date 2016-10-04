@@ -72,7 +72,7 @@ return [
                         'type' => 'yii_db',
                         'reference' => 'db',
                         'table' => 'nome_tabela',
-                        'level' => \Monolog\Logger::DEBUG
+                        'level' => 'debug',
                     ],
                 ],
                 'processor' => [],

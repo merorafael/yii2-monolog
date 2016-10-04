@@ -63,7 +63,7 @@ return [
                         'type' => 'yii_mongo',
                         'reference' => 'mongodb',
                         'collection' => 'nome_collection',
-                        'level' => \Monolog\Logger::DEBUG
+                        'level' => 'debug',
                     ],
                 ],
                 'processor' => [],
