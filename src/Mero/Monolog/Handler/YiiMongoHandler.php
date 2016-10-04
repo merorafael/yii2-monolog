@@ -23,7 +23,7 @@ class YiiMongoHandler extends AbstractProcessingHandler
     /**
      * {@inheritdoc}
      */
-    public function __construct($db, $collection, $level = Logger::ERROR, $bubble = true)
+    public function __construct($db, $collection, $level = Logger::DEBUG, $bubble = true)
     {
         if (!($db instanceof Connection)) {
             throw new \InvalidArgumentException('\yii\mongodb\Connection instance required');

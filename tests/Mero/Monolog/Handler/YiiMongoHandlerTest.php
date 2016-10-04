@@ -21,13 +21,12 @@ class YiiMongoHandlerTest extends TestCase
             ->getMockBuilder('\yii\mongodb\Connection')
             ->disableOriginalConstructor()
             ->getMock();
+
         $mongoCollection = $this
             ->getMockBuilder('\yii\mongodb\Collection')
             ->disableOriginalConstructor()
             ->getMock();
-        $mongoConnection
-            ->method('getCollection')
-            ->willReturn($mongoCollection);
+
         $record = $this->getRecord(
             Logger::WARNING,
             'test',
@@ -36,6 +35,7 @@ class YiiMongoHandlerTest extends TestCase
                 'foo' => 34,
             ]
         );
+
         $expected = [
             'message' => 'test',
             'context' => [
@@ -48,7 +48,14 @@ class YiiMongoHandlerTest extends TestCase
             'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
             'extra' => [],
         ];
+
+        $mongoConnection
+            ->expects($this->once())
+            ->method('getCollection')
+            ->will($this->returnValue($mongoCollection));
+
         $mongoCollection
+            ->expects($this->once())
             ->method('insert')
             ->willReturn($expected);
 

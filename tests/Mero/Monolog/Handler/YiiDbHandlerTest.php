@@ -18,24 +18,17 @@ class YiiDbHandlerTest extends TestCase
     public function testHandle()
     {
         $dbConnection = $this
-            ->getMockBuilder('\yii\db\Connection')
+            ->getMockBuilder('yii\\db\\Connection')
             ->disableOriginalConstructor()
-            ->setMethods([
-                'quoteTableName',
-                'createCommand',
-            ])
+            ->setMethods(['quoteTableName', 'createCommand'])
             ->getMock();
+
         $dbCommand = $this
-            ->getMockBuilder('\yii\db\Command')
+            ->getMockBuilder('yii\\db\\Command')
             ->disableOriginalConstructor()
-            ->setMethods([
-                'insert',
-                'execute',
-            ])
+            ->setMethods(['insert', 'execute'])
             ->getMock();
-        $dbConnection
-            ->method('createCommand')
-            ->willReturn($dbCommand);
+
         $record = $this->getRecord(
             Logger::WARNING,
             'test',
@@ -44,12 +37,39 @@ class YiiDbHandlerTest extends TestCase
                 'foo' => 34,
             ]
         );
+
+        $expected = [
+            'message' => 'test',
+            'context' => [
+                'data' => '[object] (stdClass: {})',
+                'foo' => 34,
+            ],
+            'level' => Logger::WARNING,
+            'level_name' => 'WARNING',
+            'channel' => 'test',
+            'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
+            'extra' => [],
+        ];
+
+        $dbConnection
+            ->expects($this->once())
+            ->method('quoteTableName')
+            ->will($this->returnValue($dbCommand));
+
+        $dbConnection
+            ->expects($this->once())
+            ->method('createCommand')
+            ->will($this->returnValue($dbCommand));
+
         $dbCommand
+            ->expects($this->once())
             ->method('insert')
-            ->willReturn($dbCommand);
+            ->will($this->returnValue($dbCommand));
+
         $dbCommand
+            ->expects($this->once())
             ->method('execute')
-            ->willReturn(1);
+            ->willReturn($expected);
 
         $handler = new YiiDbHandler($dbConnection, 'name_table');
         $handler->handle($record);
