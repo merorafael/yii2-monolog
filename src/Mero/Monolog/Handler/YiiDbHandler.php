@@ -5,7 +5,6 @@ namespace Mero\Monolog\Handler;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use yii\db\Connection;
-use yii\di\Instance;
 
 /**
  * Logs to a Yii2 database connection.

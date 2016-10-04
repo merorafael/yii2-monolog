@@ -1,7 +1,12 @@
 {
   "name": "mero/yii2-monolog",
   "description": "The Monolog integration for the Yii framework.",
-  "keywords": ["yii2", "monolog", "logging", "log"],
+  "keywords": [
+    "yii2",
+    "monolog",
+    "logging",
+    "log"
+  ],
   "type": "yii2-extension",
   "license": "MIT",
   "support": {
@@ -18,15 +23,32 @@
     "yiisoft/yii2": "*",
     "monolog/monolog": "^1.20"
   },
+  "require-dev": {
+    "phpunit/phpunit": "~4.5",
+    "phpunit/phpunit-mock-objects": "2.3.0",
+    "yiisoft/yii2-mongodb": "~2.1.0"
+  },
   "suggest": {
-    "yiisoft/yii2-mongodb": "Allows log storage database MongoDB"
+    "yiisoft/yii2-mongodb": "Allow sending log messages to a MongoDB server via Yii2 connection"
   },
   "autoload": {
-    "psr-4": { "Mero\\Monolog\\": "src/Monolog" }
+    "psr-4": {
+      "Mero\\Monolog\\": "src/Mero/Monolog"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mero\\Monolog\\": "tests/Mero/Monolog"
+    }
   },
   "extra": {
     "branch-alias": {
       "dev-master": "0.2.x-dev"
     }
+  },
+  "scripts": {
+    "test": [
+      "phpunit"
+    ]
   }
 }
