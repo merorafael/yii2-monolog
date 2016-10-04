@@ -13,7 +13,6 @@ use yii\db\Connection;
  */
 class YiiDbHandler extends AbstractProcessingHandler
 {
-
     /**
      * @var Connection Yii2 database connection
      */
@@ -32,7 +31,7 @@ class YiiDbHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function write(array $record)
     {
@@ -50,5 +49,4 @@ class YiiDbHandler extends AbstractProcessingHandler
             )
             ->execute();
     }
-
 }

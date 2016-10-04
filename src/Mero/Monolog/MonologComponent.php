@@ -163,7 +163,7 @@ class MonologComponent extends Component
                 $config = array_merge(
                     [
                         'bubble' => true,
-                        'table' => 'logs'
+                        'table' => 'logs',
                     ],
                     $config
                 );
@@ -182,7 +182,7 @@ class MonologComponent extends Component
                 $config = array_merge(
                     [
                         'bubble' => true,
-                        'collection' => 'logs'
+                        'collection' => 'logs',
                     ],
                     $config
                 );

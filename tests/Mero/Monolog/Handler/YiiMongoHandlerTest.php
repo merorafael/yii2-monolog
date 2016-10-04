@@ -7,7 +7,6 @@ use Monolog\Logger;
 
 class YiiMongoHandlerTest extends TestCase
 {
-
     /**
      * @expectedException \TypeError
      */
@@ -33,15 +32,15 @@ class YiiMongoHandlerTest extends TestCase
             Logger::WARNING,
             'test',
             [
-                'data' => new \stdClass,
-                'foo' => 34
+                'data' => new \stdClass(),
+                'foo' => 34,
             ]
         );
         $expected = [
             'message' => 'test',
             'context' => [
                 'data' => '[object] (stdClass: {})',
-                'foo' => 34
+                'foo' => 34,
             ],
             'level' => Logger::WARNING,
             'level_name' => 'WARNING',
@@ -56,5 +55,4 @@ class YiiMongoHandlerTest extends TestCase
         $handler = new YiiMongoHandler($mongoConnection, 'name_collection');
         $handler->handle($record);
     }
-
 }

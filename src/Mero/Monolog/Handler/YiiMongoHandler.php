@@ -15,14 +15,13 @@ use Monolog\Logger;
  */
 class YiiMongoHandler extends AbstractProcessingHandler
 {
-
     /**
      * @var Collection
      */
     protected $collection;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(Connection $db, $collection, $level = Logger::ERROR, $bubble = true)
     {
@@ -31,19 +30,18 @@ class YiiMongoHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function write(array $record)
     {
-        $this->collection->insert($record["formatted"]);
+        $this->collection->insert($record['formatted']);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getDefaultFormatter()
     {
         return new NormalizerFormatter();
     }
-
 }

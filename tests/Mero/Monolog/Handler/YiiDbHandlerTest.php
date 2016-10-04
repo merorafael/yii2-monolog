@@ -7,7 +7,6 @@ use Monolog\Logger;
 
 class YiiDbHandlerTest extends TestCase
 {
-
     /**
      * @expectedException \TypeError
      */
@@ -23,7 +22,7 @@ class YiiDbHandlerTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods([
                 'quoteTableName',
-                'createCommand'
+                'createCommand',
             ])
             ->getMock();
         $dbCommand = $this
@@ -31,7 +30,7 @@ class YiiDbHandlerTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods([
                 'insert',
-                'execute'
+                'execute',
             ])
             ->getMock();
         $dbConnection
@@ -41,8 +40,8 @@ class YiiDbHandlerTest extends TestCase
             Logger::WARNING,
             'test',
             [
-                'data' => new \stdClass,
-                'foo' => 34
+                'data' => new \stdClass(),
+                'foo' => 34,
             ]
         );
         $dbCommand
@@ -55,5 +54,4 @@ class YiiDbHandlerTest extends TestCase
         $handler = new YiiDbHandler($dbConnection, 'name_table');
         $handler->handle($record);
     }
-
 }
