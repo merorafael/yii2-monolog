@@ -2,10 +2,9 @@
 
 namespace Mero\Monolog\Target;
 
-use Mero\Monolog\Exception\ComponentNotConfiguredException;
 use Mero\Monolog\MonologComponent;
-use Yii;
 use Monolog\Logger;
+use yii\di\Instance;
 use yii\log\Logger as YiiLogger;
 use yii\log\Target;
 
@@ -19,7 +18,12 @@ class MonologTarget extends Target
     /**
      * @var MonologComponent Monolog component object
      */
-    private $component;
+    protected $component;
+
+    /**
+     * @var string Component name used in the configuration Yii2
+     */
+    public $componentName = 'monolog';
 
     /**
      * @var string Monolog channel name
@@ -39,19 +43,16 @@ class MonologTarget extends Target
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function init()
     {
         parent::init();
-        if (!isset(Yii::$app->monolog) || (Yii::$app->monolog instanceof MonologComponent)) {
-            throw new ComponentNotConfiguredException();
-        }
-        $this->component = Yii::$app->monolog;
+        $this->component = Instance::ensure($this->componentName, MonologComponent::className());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function export()
     {
