@@ -39,17 +39,13 @@ class YiiDbHandlerTest extends TestCase
         );
 
         $expected = [
-            'message' => 'test',
-            'context' => [
-                'data' => '[object] (stdClass: {})',
-                'foo' => 34,
-            ],
-            'level' => Logger::WARNING,
-            'level_name' => 'WARNING',
             'channel' => 'test',
-            'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
-            'extra' => [],
+            'level' => Logger::WARNING,
+            'message' => 'test',
+            'time' => $record['datetime']->format('Y-m-d H:i:s'),
         ];
+
+        $tableName = 'name_table';
 
         $dbConnection
             ->expects($this->once())
@@ -64,14 +60,14 @@ class YiiDbHandlerTest extends TestCase
         $dbCommand
             ->expects($this->once())
             ->method('insert')
-            ->will($this->returnValue($dbCommand));
+            ->willReturn($dbCommand)
+            ->with($tableName, $expected);
 
         $dbCommand
             ->expects($this->once())
-            ->method('execute')
-            ->willReturn($expected);
+            ->method('execute');
 
-        $handler = new YiiDbHandler($dbConnection, 'name_table');
+        $handler = new YiiDbHandler($dbConnection, $tableName);
         $handler->handle($record);
     }
 }

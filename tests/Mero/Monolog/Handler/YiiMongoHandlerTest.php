@@ -57,7 +57,7 @@ class YiiMongoHandlerTest extends TestCase
         $mongoCollection
             ->expects($this->once())
             ->method('insert')
-            ->willReturn($expected);
+            ->with($expected);
 
         $handler = new YiiMongoHandler($mongoConnection, 'name_collection');
         $handler->handle($record);
