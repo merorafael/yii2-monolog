@@ -127,6 +127,7 @@ return [
 - rotating_file
 - yii_db
 - yii_mongo
+- hipchat
 
 ### Object structure
 

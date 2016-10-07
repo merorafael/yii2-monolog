@@ -13,6 +13,7 @@ use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\GelfHandler;
+use Monolog\Handler\HipChatHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use yii\base\Component;
@@ -193,6 +194,38 @@ class MonologComponent extends Component
                     $config['level'],
                     $config['bubble']
                 );
+            case 'hipchat':
+                if (!isset($config['token'])) {
+                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
+                }
+                if (!isset($config['room'])) {
+                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
+                }
+                $config = array_merge(
+                    [
+                        'notify' => false,
+                        'nickname' => 'Monolog',
+                        'bubble' => true,
+                        'use_ssl' => true,
+                        'message_format' => 'text',
+                        'host' => 'api.hipchat.com',
+                        'api_version' => HipChatHandler::API_V1,
+                    ],
+                    $config
+                );
+
+                return new HipChatHandler(
+                    $config['token'],
+                    $config['room'],
+                    $config['nickname'],
+                    $config['notify'],
+                    $config['level'],
+                    $config['bubble'],
+                    $config['use_ssl'],
+                    $config['message_format'],
+                    $config['host'],
+                    $config['version']
+                );
             case 'elasticsearch':
             case 'fingers_crossed':
             case 'filter':
@@ -203,12 +236,10 @@ class MonologComponent extends Component
             case 'syslog':
             case 'syslogudp':
             case 'swift_mailer':
-            case 'native_mailer':
             case 'socket':
             case 'pushover':
             case 'raven':
             case 'newrelic':
-            case 'hipchat':
             case 'slack':
             case 'cube':
             case 'amqp':
