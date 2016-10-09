@@ -35,6 +35,9 @@ class MonologComponent extends Component
         this->parseChannels();
     }
 
+    /**
+     *
+     */
     protected function createDefaultChannels()
     {
         if (isset($this->channels['main'])) {
@@ -49,11 +52,17 @@ class MonologComponent extends Component
         ];
     }
 
+    /**
+     * @return string
+     */
     protected function getLogName()
     {
         return 'log_' . date('Y-m-d') . '.log';
     }
 
+    /**
+     *
+     */
     protected function parseChannels()
     {
         foreach ($this->channels as $name => $channel) {
@@ -65,6 +74,10 @@ class MonologComponent extends Component
         }
     }
 
+    /**
+     * @param  array $channel
+     * @return array
+     */
     protected function getHandlers($channel)
     {
         $handlers = [];
@@ -80,10 +93,9 @@ class MonologComponent extends Component
     }
 
     /**
-     * [getHandlerConfig description]
-     * @param  [type] $config [description]
+     * @param  array $config
      * @throws InvalidHandlerException
-     * @return [type]         [description]
+     * @return AbstractHandler
      */
     protected function getHandlerConfig($config)
     {
@@ -103,6 +115,10 @@ class MonologComponent extends Component
         return $handler;
     }
 
+    /**
+     * @param  array $channel
+     * @return array
+     */
     protected function getProcessors($channel)
     {
         $processors = [];
@@ -111,7 +127,7 @@ class MonologComponent extends Component
         }
 
         $processors = $channel['processor'];
-        return $processors;``
+        return $processors;
     }
 
     /**
