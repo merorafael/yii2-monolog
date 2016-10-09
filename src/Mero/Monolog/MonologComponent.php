@@ -5,21 +5,11 @@ namespace Mero\Monolog;
 use Mero\Monolog\Exception\InsufficientParametersException;
 use Mero\Monolog\Exception\InvalidHandlerException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
-use Mero\Monolog\Handler\YiiDbHandler;
-use Mero\Monolog\Handler\YiiMongoHandler;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractHandler;
-use Monolog\Handler\BrowserConsoleHandler;
-use Monolog\Handler\ChromePHPHandler;
-use Monolog\Handler\FirePHPHandler;
-use Monolog\Handler\GelfHandler;
-use Monolog\Handler\HipChatHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Handler\StreamHandler;
 use yii\base\Component;
 use Monolog\Logger;
 use Yii;
-use yii\di\Instance;
 
 /**
  * MonologComponent is an component for the Monolog library.
@@ -28,6 +18,8 @@ use yii\di\Instance;
  */
 class MonologComponent extends Component
 {
+    use HandlersDefinitionTrait;
+
     /**
      * @var array Channels
      */
@@ -39,221 +31,249 @@ class MonologComponent extends Component
     public function init()
     {
         parent::init();
-        if (!isset($this->channels['main'])) {
-            $this->channels['main'] = [
-                'handler' => [
-                    'type' => 'rotating_file',
-                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
-                ],
-            ];
+        this->createDefaultChannels();
+        this->parseChannels();
+    }
+
+    protected function createDefaultChannels()
+    {
+        if (isset($this->channels['main'])) {
+            return;
         }
-        foreach ($this->channels as $name => &$channel) {
-            $handlers = [];
-            $processors = [];
-            if (!empty($channel['handler']) && is_array($channel['handler'])) {
-                foreach ($channel['handler'] as &$handlerConfig) {
-                    if (!is_array($handlerConfig) && !$handlerConfig instanceof AbstractHandler) {
-                        throw new InvalidHandlerException();
-                    }
-                    if (is_array($handlerConfig)) {
-                        $handler = $this->createHandlerInstance($handlerConfig);
-                        if ($handlerConfig['formatter'] instanceof FormatterInterface) {
-                            $handler->setFormatter($handlerConfig['formatter']);
-                        }
-                    } else {
-                        $handler = $handlerConfig;
-                    }
-                    $handlers[] = $handler;
-                }
-            }
-            if (!empty($channel['processor']) && is_array($channel['processor'])) {
-                $processors = $channel['processor'];
-            }
-            $channel = new Logger($name, $handlers, $processors);
+
+        $this->channels['main'] = [
+            'handler' => [
+                'type' => 'rotating_file',
+                'path' => '@app/runtime/logs/' . this->getLogName(),
+            ],
+        ];
+    }
+
+    protected function getLogName()
+    {
+        return 'log_' . date('Y-m-d') . '.log';
+    }
+
+    protected function parseChannels()
+    {
+        foreach ($this->channels as $name => $channel) {
+            $this->channels[$name] = new Logger(
+                $name,
+                $this->getHandlers($channel),
+                $this->getProcessors($channel)
+            );
         }
+    }
+
+    protected function getHandlers($channel)
+    {
+        $handlers = [];
+        if (empty($channel['handler']) || !is_array($channel['handler'])) {
+            return $handlers;
+        }
+
+        foreach ($channel['handler'] as $handlerConfig) {
+            $handlers[] = $this->getHandler($handlerConfig);
+        }
+
+        return $handlers;
+    }
+
+    /**
+     * [getHandlerConfig description]
+     * @param  [type] $config [description]
+     * @throws InvalidHandlerException
+     * @return [type]         [description]
+     */
+    protected function getHandlerConfig($config)
+    {
+        if (!is_array($handlerConfig) && !$handlerConfig instanceof AbstractHandler) {
+            throw new InvalidHandlerException();
+        }
+
+        if (!is_array($handlerConfig)) {
+            return $handlerConfig;
+        }
+
+        $handler = $this->createHandlerInstance($handlerConfig);
+        if ($handlerConfig['formatter'] instanceof FormatterInterface) {
+            $handler->setFormatter($handlerConfig['formatter']);
+        }
+
+        return $handler;
+    }
+
+    protected function getProcessors($channel)
+    {
+        $processors = [];
+        if (empty($channel['processor']) || !is_array($channel['processor'])) {
+            return $processors;
+        }
+
+        $processors = $channel['processor'];
+        return $processors;``
     }
 
     /**
      * Create handler instance.
      *
      * @param array $config Configuration parameters
-     *
-     * @return AbstractHandler
-     *
      * @throws InsufficientParametersException
+     * @return AbstractHandler
      */
     protected function createHandlerInstance(array $config)
     {
         if (!isset($config['type'])) {
             throw new InsufficientParametersException('Type not found');
         }
-        $config['level'] = !isset($config['level'])
-            ? Logger::DEBUG
-            : Logger::toMonologLevel($config['level']);
-        switch ($config['type']) {
-            case 'stream':
-                if (!isset($config['path'])) {
-                    throw new InsufficientParametersException("Stream config 'path' has not been set");
-                }
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
 
-                return new StreamHandler(Yii::getAlias($config['path']), $config['level'], $config['bubble']);
-            case 'firephp':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new FirePHPHandler($config['level'], $config['bubble']);
-            case 'browser_console':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new BrowserConsoleHandler($config['level'], $config['bubble']);
-            case 'gelf':
-                if (!isset($config['publisher'])) {
-                    throw new InsufficientParametersException("Gelf config 'publisher' has not been set");
-                }
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new GelfHandler($config['publisher'], $config['level'], $config['bubble']);
-            case 'chromephp':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new ChromePHPHandler($config['level'], $config['bubble']);
-            case 'rotating_file':
-                if (!isset($config['path'])) {
-                    throw new InsufficientParametersException("Rotating file config 'path' has not been set");
-                }
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'max_files' => 0,
-                        'file_permission' => null,
-                        'filename_format' => '{filename}-{date}',
-                        'date_format' => 'Y-m-d',
-                    ],
-                    $config
-                );
-                $handler = new RotatingFileHandler(
-                    Yii::getAlias($config['path']),
-                    $config['max_files'],
-                    $config['level'],
-                    $config['bubble'],
-                    $config['file_permission']
-                );
-                $handler->setFilenameFormat($config['filename_format'], $config['date_format']);
-
-                return $handler;
-            case 'yii_db':
-                if (!isset($config['reference'])) {
-                    throw new InsufficientParametersException("Database config 'reference' has not been set");
-                }
-                $dbInstance = Instance::ensure($config['reference'], '\yii\db\Connection');
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'table' => 'logs',
-                    ],
-                    $config
-                );
-
-                return new YiiDbHandler(
-                    $dbInstance,
-                    $config['table'],
-                    $config['level'],
-                    $config['bubble']
-                );
-            case 'yii_mongo':
-                if (!isset($config['reference'])) {
-                    throw new InsufficientParametersException("Mongo config 'reference' has not been set");
-                }
-                $mongoInstance = Instance::ensure($config['reference'], '\yii\mongodb\Connection');
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'collection' => 'logs',
-                    ],
-                    $config
-                );
-
-                return new YiiMongoHandler(
-                    $mongoInstance,
-                    $config['collection'],
-                    $config['level'],
-                    $config['bubble']
-                );
-            case 'hipchat':
-                if (!isset($config['token'])) {
-                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
-                }
-                if (!isset($config['room'])) {
-                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
-                }
-                $config = array_merge(
-                    [
-                        'notify' => false,
-                        'nickname' => 'Monolog',
-                        'bubble' => true,
-                        'use_ssl' => true,
-                        'message_format' => 'text',
-                        'host' => 'api.hipchat.com',
-                        'api_version' => HipChatHandler::API_V1,
-                    ],
-                    $config
-                );
-
-                return new HipChatHandler(
-                    $config['token'],
-                    $config['room'],
-                    $config['nickname'],
-                    $config['notify'],
-                    $config['level'],
-                    $config['bubble'],
-                    $config['use_ssl'],
-                    $config['message_format'],
-                    $config['host'],
-                    $config['version']
-                );
-            case 'elasticsearch':
-            case 'fingers_crossed':
-            case 'filter':
-            case 'buffer':
-            case 'deduplication':
-            case 'group':
-            case 'whatfailuregroup':
-            case 'syslog':
-            case 'syslogudp':
-            case 'swift_mailer':
-            case 'socket':
-            case 'pushover':
-            case 'raven':
-            case 'newrelic':
-            case 'slack':
-            case 'cube':
-            case 'amqp':
-            case 'error_log':
-            case 'null':
-            case 'test':
-            case 'debug':
-            case 'loggly':
-            case 'logentries':
-            case 'flowdock':
-            case 'rollbar':
-
-                return;
+        $config['level'] = $this->getConfigLevel($config);
+        if ($config['type'] == 'stream') {
+            return $this->createStreamHandler($config);
         }
+
+        if ($config['type'] == 'firephp') {
+            return $this->createFirePHPHandler($config);
+        }
+
+        if ($config['type'] == 'browser_console') {
+            return $this->createBrowserConsoleHandler($config);
+        }
+
+        if ($config['type'] == 'gelf') {
+            return $this->createGelfHandler($config);
+        }
+
+        if ($config['type'] == 'chromephp') {
+            return $this->createChromePHPHandler($config);
+        }
+
+        if ($config['type'] == 'rotating_file') {
+            return $this->createRotatingFileHandler($config);
+        }
+
+        if ($config['type'] == 'yii_db') {
+            return $this->createYiiDbHandler($config);
+        }
+
+        if ($config['type'] == 'yii_mongo') {
+            return $this->createYiiMongoHandler($config);
+        }
+
+        if ($config['type'] == 'hipchat') {
+            return $this->createHipChatHandler($config);
+        }
+
+        if ($config['type'] == 'elasticsearch') {
+            return $this->createElasticsearch($config);
+        }
+
+        if ($config['type'] == 'fingers_crossed') {
+            return $this->createFingersCrossed($config);
+        }
+
+        if ($config['type'] == 'filter') {
+            return $this->createFilter($config);
+        }
+
+        if ($config['type'] == 'buffer') {
+            return $this->createBuffer($config);
+        }
+
+        if ($config['type'] == 'deduplication') {
+            return $this->createDeduplication($config);
+        }
+
+        if ($config['type'] == 'group') {
+            return $this->createGroup($config);
+        }
+
+        if ($config['type'] == 'whatfailuregroup') {
+            return $this->createWhatfailuregroup($config);
+        }
+
+        if ($config['type'] == 'syslog') {
+            return $this->createSyslog($config);
+        }
+
+        if ($config['type'] == 'syslogudp') {
+            return $this->createSyslogudp($config);
+        }
+
+        if ($config['type'] == 'swift_mailer') {
+            return $this->createSwiftMailer($config);
+        }
+
+        if ($config['type'] == 'socket') {
+            return $this->createSocket($config);
+        }
+
+        if ($config['type'] == 'pushover') {
+            return $this->createPushover($config);
+        }
+
+        if ($config['type'] == 'raven') {
+            return $this->createRaven($config);
+        }
+
+        if ($config['type'] == 'newrelic') {
+            return $this->createNewrelic($config);
+        }
+
+        if ($config['type'] == 'slack') {
+            return $this->createSlack($config);
+        }
+
+        if ($config['type'] == 'cube') {
+            return $this->createCube($config);
+        }
+
+        if ($config['type'] == 'amqp') {
+            return $this->createAmqp($config);
+        }
+
+        if ($config['type'] == 'error_log') {
+            return $this->createErrorLog($config);
+        }
+
+        if ($config['type'] == 'null') {
+            return $this->createNull($config);
+        }
+
+        if ($config['type'] == 'test') {
+            return $this->createTest($config);
+        }
+
+        if ($config['type'] == 'debug') {
+            return $this->createDebug($config);
+        }
+
+        if ($config['type'] == 'loggly') {
+            return $this->createLoggly($config);
+        }
+
+        if ($config['type'] == 'logentries') {
+            return $this->createLogentries($config);
+        }
+
+        if ($config['type'] == 'flowdock') {
+            return $this->createFlowdock($config);
+        }
+
+        if ($config['type'] == 'rollbar') {
+            return $this->createRollbar($config);
+        }
+
+        throw BadMethodCallException(sprintf("'%s' not found", $config['type']);
+    }
+
+    protected function getConfigLevel()
+    {
+        if (!isset($config['level'])) {
+            return Logger::DEBUG;
+        }
+
+        return Logger::toMonologLevel($config['level']);
     }
 
     /**
