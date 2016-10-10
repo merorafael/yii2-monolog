@@ -39,7 +39,7 @@ class MonologComponent extends Component
                 'handler' => [
                     [
                         'type' => 'rotating_file',
-                        'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
+                        'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
                     ],
                 ],
             ];
@@ -49,7 +49,7 @@ class MonologComponent extends Component
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function init()
     {
@@ -62,17 +62,14 @@ class MonologComponent extends Component
     /**
      * Create a logger channel.
      *
-     * @param string $name   Channel name
-     * @param array  $config Channel configuration
+     * @param string $name Logger channel name
+     * @param array $config Logger channel configuration
      *
      * @throws \InvalidArgumentException When the channel already exists
      * @throws InvalidHandlerException   When a handler configuration is invalid
      */
     public function createChannel($name, array $config)
     {
-        if (isset($this->channels[$name]) && $this->channels[$name] instanceof Logger) {
-            throw new \InvalidArgumentException("Channel '{$name}' already exists");
-        }
         $handlers = [];
         $processors = [];
         if (!empty($config['handler']) && is_array($config['handler'])) {
@@ -96,22 +93,37 @@ class MonologComponent extends Component
         if (!empty($config['processor']) && is_array($config['processor'])) {
             $processors = $config['processor'];
         }
-        $this->channels[$name] = new Logger($name, $handlers, $processors);
-
+        $this->openChannel($name, $handlers, $processors);
         return;
     }
 
     /**
-     * Close a open channel.
+     * Open a new logger channel.
      *
-     * @param string $name Channel name
+     * @param string $name Logger channel name
+     * @param array $handlers Handlers collection
+     * @param array $processors Processors collection
+     */
+    protected function openChannel($name, array $handlers, array $processors)
+    {
+        if (isset($this->channels[$name]) && $this->channels[$name] instanceof Logger) {
+            throw new \InvalidArgumentException("Channel '{$name}' already exists");
+        }
+
+        $this->channels[$name] = new Logger($name, $handlers, $processors);
+        return;
+    }
+
+    /**
+     * Close a open logger channel.
+     *
+     * @param string $name Logger channel name
      */
     public function closeChannel($name)
     {
         if (isset($this->channels[$name])) {
             unset($this->channels[$name]);
         }
-
         return;
     }
 
@@ -126,8 +138,8 @@ class MonologComponent extends Component
      */
     protected function createHandlerInstance(array $config)
     {
-        if (!isset($config['type'])) {
-            throw new InsufficientParametersException('Type not found');
+        if (!isset($handler['type'])) {
+            throw new InsufficientParametersException("Parameter 'type' not found");
         }
         $config['level'] = !isset($config['level'])
             ? Logger::DEBUG
