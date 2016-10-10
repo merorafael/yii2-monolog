@@ -43,7 +43,7 @@ class MonologTarget extends Target
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -52,7 +52,7 @@ class MonologTarget extends Target
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function export()
     {

@@ -4,7 +4,6 @@ namespace Mero\Monolog;
 
 class MonologComponentTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var MonologComponent MonologComponent instance
      */
@@ -18,7 +17,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
     /**
      * Returns channel configuration.
      *
-     * @param array $handler Handlers configuration
+     * @param array $handler   Handlers configuration
      * @param array $processor Processors configuration
      *
      * @return array Channel configuration
@@ -27,7 +26,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'handler' => $handler,
-            'processor' => $processor
+            'processor' => $processor,
         ];
     }
 
@@ -40,7 +39,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
         $this->component->createChannel(
             'test',
             $this->getChannelConfig([
-                'invalid_parameter'
+                'invalid_parameter',
             ])
         );
     }
@@ -50,7 +49,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [
-                    'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
+                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
                 ],
                 [
                     'type' => 'stream',
@@ -67,21 +66,21 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'type' => 'yii_db',
-                    'table' => 'logs'
+                    'table' => 'logs',
                 ],
                 [
                     'type' => 'yii_mongo',
-                    'collection' => 'logs'
+                    'collection' => 'logs',
                 ],
                 [
                     'type' => 'hipchat',
-                    'token' => 'XXXX'
+                    'token' => 'XXXX',
                 ],
                 [
                     'type' => 'hipchat',
-                    'room' => 'XXXX'
+                    'room' => 'XXXX',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -95,9 +94,8 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
         $this->component->createChannel(
             'test',
             $this->getChannelConfig([
-                $config
+                $config,
             ])
         );
     }
-
 }
