@@ -18,7 +18,6 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use yii\base\Component;
 use Monolog\Logger;
-use Yii;
 use yii\di\Instance;
 
 /**
@@ -29,48 +28,89 @@ use yii\di\Instance;
 class MonologComponent extends Component
 {
     /**
-     * @var array Channels
+     * @var array Logger channels
      */
     protected $channels;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
+    public function __construct(array $channels = [], array $config = [])
     {
-        parent::init();
-        if (!isset($this->channels['main'])) {
-            $this->channels['main'] = [
+        if (!isset($channels['main'])) {
+            $channel['main'] = [
                 'handler' => [
-                    'type' => 'rotating_file',
-                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
+                    [
+                        'type' => 'rotating_file',
+                        'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
+                    ],
                 ],
             ];
         }
-        foreach ($this->channels as $name => &$channel) {
-            $handlers = [];
-            $processors = [];
-            if (!empty($channel['handler']) && is_array($channel['handler'])) {
-                foreach ($channel['handler'] as &$handlerConfig) {
-                    if (!is_array($handlerConfig) && !$handlerConfig instanceof AbstractHandler) {
-                        throw new InvalidHandlerException();
-                    }
-                    if (is_array($handlerConfig)) {
-                        $handler = $this->createHandlerInstance($handlerConfig);
-                        if ($handlerConfig['formatter'] instanceof FormatterInterface) {
-                            $handler->setFormatter($handlerConfig['formatter']);
-                        }
-                    } else {
-                        $handler = $handlerConfig;
-                    }
-                    $handlers[] = $handler;
-                }
-            }
-            if (!empty($channel['processor']) && is_array($channel['processor'])) {
-                $processors = $channel['processor'];
-            }
-            $channel = new Logger($name, $handlers, $processors);
+        $this->channels = $channels;
+        parent::__construct($config);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        foreach ($this->channels as $name => $config) {
+            $this->createChannel($name, $config);
         }
+        parent::init();
+    }
+
+    /**
+     * Create a logger channel.
+     *
+     * @param string $name Channel name
+     * @param array $config Channel configuration
+     *
+     * @throws \InvalidArgumentException When the channel already exists
+     * @throws InvalidHandlerException When a handler configuration is invalid
+     */
+    public function createChannel($name, array $config)
+    {
+        if (isset($this->channels[$name]) && $this->channels[$name] instanceof Logger) {
+            throw new \InvalidArgumentException("Channel '{$name}' already exists");
+        }
+        $handlers = [];
+        $processors = [];
+        if (!empty($config['handler']) && is_array($config['handler'])) {
+            foreach ($config['handler'] as $handler) {
+                if (!is_array($handler) && !$handler instanceof AbstractHandler) {
+                    throw new InvalidHandlerException();
+                }
+                if (is_array($handler)) {
+                    $handlerObject = $this->createHandlerInstance($handler);
+                    if (array_key_exists('formatter', $handler) &&
+                        $handler['formatter'] instanceof FormatterInterface
+                    ) {
+                        $handlerObject->setFormatter($handler['formatter']);
+                    }
+                } else {
+                    $handlerObject = $handler;
+                }
+                $handlers[] = $handlerObject;
+            }
+        }
+        if (!empty($config['processor']) && is_array($config['processor'])) {
+            $processors = $config['processor'];
+        }
+        $this->channels[$name] = new Logger($name, $handlers, $processors);
+        return;
+    }
+
+    /**
+     * Close a open channel.
+     *
+     * @param string $name Channel name
+     */
+    public function closeChannel($name)
+    {
+        if (isset($this->channels[$name])) {
+            unset($this->channels[$name]);
+        }
+        return;
     }
 
     /**
@@ -85,7 +125,7 @@ class MonologComponent extends Component
     protected function createHandlerInstance(array $config)
     {
         if (!isset($config['type'])) {
-            throw new InsufficientParametersException('Type not found');
+            throw new InsufficientParametersException("Type not found");
         }
         $config['level'] = !isset($config['level'])
             ? Logger::DEBUG
@@ -100,7 +140,7 @@ class MonologComponent extends Component
                     $config
                 );
 
-                return new StreamHandler(Yii::getAlias($config['path']), $config['level'], $config['bubble']);
+                return new StreamHandler(\Yii::getAlias($config['path']), $config['level'], $config['bubble']);
             case 'firephp':
                 $config = array_merge(
                     ['bubble' => true],
@@ -147,7 +187,7 @@ class MonologComponent extends Component
                     $config
                 );
                 $handler = new RotatingFileHandler(
-                    Yii::getAlias($config['path']),
+                    \Yii::getAlias($config['path']),
                     $config['max_files'],
                     $config['level'],
                     $config['bubble'],

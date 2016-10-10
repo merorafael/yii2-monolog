@@ -2,7 +2,6 @@
 
 namespace Mero\Monolog\Handler;
 
-use Mero\Monolog\TestCase;
 use Monolog\Logger;
 
 class YiiDbHandlerTest extends TestCase

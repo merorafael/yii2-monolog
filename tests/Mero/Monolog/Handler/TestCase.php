@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Mero\Monolog;
+namespace Mero\Monolog\Handler;
 
 use Monolog\Logger;
 
