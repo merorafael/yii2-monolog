@@ -27,7 +27,7 @@ class MonologComponent extends Component
     /**
      * @var array Channels
      */
-    protected $channels;
+    public $channels;
 
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class MonologComponent extends Component
             $this->channels['main'] = [
                 'handler' => [
                     'type' => 'rotating_file',
-                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
+                    'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
                 ],
             ];
         }
@@ -53,7 +53,9 @@ class MonologComponent extends Component
                     }
                     if (is_array($handlerConfig)) {
                         $handler = $this->createHandlerInstance($handlerConfig);
-                        if ($handlerConfig['formatter'] instanceof FormatterInterface) {
+                        if (array_key_exists('formatter', $handlerConfig) &&
+                            $handlerConfig['formatter'] instanceof FormatterInterface
+                        ) {
                             $handler->setFormatter($handlerConfig['formatter']);
                         }
                     } else {
