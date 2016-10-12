@@ -7,7 +7,9 @@ use Mero\Monolog\Exception\InvalidHandlerException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
 use Mero\Monolog\Handler\YiiDbHandler;
 use Mero\Monolog\Handler\YiiMongoHandler;
+
 use Monolog\Formatter\FormatterInterface;
+
 use Monolog\Handler\AbstractHandler;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\ChromePHPHandler;
@@ -15,7 +17,9 @@ use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\GelfHandler;
 use Monolog\Handler\HipChatHandler;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
+
 use yii\base\Component;
 use Monolog\Logger;
 use yii\di\Instance;
@@ -295,6 +299,37 @@ class MonologComponent extends Component
             case 'raven':
             case 'newrelic':
             case 'slack':
+                // Checking required parameters (token and slack channel)
+                if (!isset($config['token'])) {
+                    throw new InsufficientParametersException("Slack config 'token' has not been set");
+                }
+                if (!isset($config['channel'])) {
+                    throw new InsufficientParametersException("Slack config 'channel' has not been set");
+                }
+
+                $config = array_merge(
+                    [
+                        'username' => 'Monolog',
+                        'useAttachment' => true,
+                        'iconEmoji' => ":computer:",
+                        'bubble' => true,
+                        'useShortAttachment' => false,
+                        'includeContextAndExtra' => false,
+                    ],
+                    $config
+                );
+
+                return new SlackHandler(
+                    $config['token'],
+                    $config['channel'],
+                    $config['username'],
+                    $config['useAttachment'],
+                    $config['iconEmoji'],
+                    $config['level'],
+                    $config['bubble'],
+                    $config['useShortAttachment'],
+                    $config['includeContextAndExtra']
+                );
             case 'cube':
             case 'amqp':
             case 'error_log':
@@ -305,7 +340,6 @@ class MonologComponent extends Component
             case 'logentries':
             case 'flowdock':
             case 'rollbar':
-
                 return;
         }
     }
