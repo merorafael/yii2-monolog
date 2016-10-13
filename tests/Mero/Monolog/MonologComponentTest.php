@@ -80,6 +80,10 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
                     'type' => 'hipchat',
                     'room' => 'XXXX',
                 ],
+                [
+                    'type' => 'slack',
+                    'channel' => 'XXXX',
+                ],
             ],
         ];
     }
