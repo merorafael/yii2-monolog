@@ -126,8 +126,25 @@ return [
 - chromephp
 - rotating_file
 - yii_db
+
+```php
+return [
+    //...
+    'handler' => [
+        [
+            'type' => 'yii_db',
+            'table' => 'my_custom_logs',                        // target DB name
+            'additional_fields' => ['context', 'extra'],        // Extra columns added/removed dynamically
+            'level' => 'debug'
+        ]
+    ],
+    //...
+];
+```
+
 - yii_mongo
 - hipchat
+- slack
 
 ### Object structure
 
@@ -172,7 +189,7 @@ class ExampleController extends Controller
      */
     public function actionFirstExample()
     {
-        $monologComponent = Yii::app()->monolog;
+        $monologComponent = Yii::$app->monolog;
         $logger = $monologComponent->getLogger();
         $logger->log('info', 'Hello world');
     }
@@ -182,10 +199,11 @@ class ExampleController extends Controller
      */
     public function actionSecondExample()
     {
-        $monologComponent = Yii::app()->monolog;
+        $monologComponent = Yii::$app->monolog;
         $logger = $monologComponent->getLogger("channel1");
         $logger->log('info', 'Hello world');
     }
     
 }
 ```
+
