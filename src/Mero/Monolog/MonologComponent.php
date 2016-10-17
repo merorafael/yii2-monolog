@@ -30,7 +30,7 @@ class MonologComponent extends Component
     public function __construct(array $channels = [], array $config = [])
     {
         if (!isset($channels['main'])) {
-            $channel['main'] = [
+            $channels['main'] = [
                 'handler' => [
                     [
                         'type' => 'rotating_file',
