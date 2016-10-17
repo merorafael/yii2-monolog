@@ -11,7 +11,11 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->component = new MonologComponent();
+        $this->component = new MonologComponent([
+            'main' => [
+                'handler' => [],
+            ],
+        ]);
     }
 
     /**
@@ -35,9 +39,9 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidHandler()
     {
-        $this->component->closeChannel('test');
+        $this->component->closeChannel('main');
         $this->component->createChannel(
-            'test',
+            'main',
             $this->getChannelConfig([
                 'invalid_parameter',
             ])
@@ -98,9 +102,9 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsufficientParameters(array $config)
     {
-        $this->component->closeChannel('test');
+        $this->component->closeChannel('main');
         $this->component->createChannel(
-            'test',
+            'main',
             $this->getChannelConfig([
                 $config,
             ])
