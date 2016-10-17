@@ -12,7 +12,10 @@ use Mero\Monolog\Handler\Factory\GelfFactory;
 use Mero\Monolog\Handler\Factory\HipChatFactory;
 use Mero\Monolog\Handler\Factory\RotatingFileFactory;
 use Mero\Monolog\Handler\Factory\SlackFactory;
+use Mero\Monolog\Handler\Factory\SocketFactory;
 use Mero\Monolog\Handler\Factory\StreamFactory;
+use Mero\Monolog\Handler\Factory\SyslogFactory;
+use Mero\Monolog\Handler\Factory\SyslogUdpFactory;
 use Mero\Monolog\Handler\Factory\YiiDbFactory;
 use Mero\Monolog\Handler\Factory\YiiMongoFactory;
 use Monolog\Logger;
@@ -44,10 +47,10 @@ class Strategy
             'deduplication' => '',
             'group' => '',
             'whatfailuregroup' => '',
-            'syslog' => '',
-            'syslogudp' => '',
+            'syslog' => SyslogFactory::className(),
+            'syslogudp' => SyslogUdpFactory::className(),
             'swift_mailer' => '',
-            'socket' => '',
+            'socket' => SocketFactory::className(),
             'pushover' => '',
             'raven' => '',
             'newrelic' => '',
@@ -108,9 +111,9 @@ class Strategy
             );
         }
         $this->hasFactory($config['type']);
-        $config['level'] = !isset($config['level'])
-            ? Logger::DEBUG
-            : Logger::toMonologLevel($config['level']);
+        if (isset($config['level'])) {
+            $config['level'] = Logger::toMonologLevel($config['level']);
+        }
 
         $factoryClass = &$this->factories[$config['type']];
 

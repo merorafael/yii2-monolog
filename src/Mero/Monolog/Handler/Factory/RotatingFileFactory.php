@@ -4,6 +4,7 @@ namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 
 class RotatingFileFactory extends AbstractFactory
 {
@@ -14,6 +15,7 @@ class RotatingFileFactory extends AbstractFactory
     {
         $this->config = array_merge(
             [
+                'level' => Logger::DEBUG,
                 'bubble' => true,
                 'max_files' => 0,
                 'file_permission' => null,

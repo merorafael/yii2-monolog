@@ -2,112 +2,63 @@
 
 namespace Mero\Monolog;
 
+use Monolog\Logger;
+
 class MonologComponentTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MonologComponent MonologComponent instance
+     * Returns a component object.
+     *
+     * @param array $handler   Handlers configuration
+     * @param array $processor Processors configuration
+     *
+     * @return MonologComponent Component object
      */
-    protected $component;
-
-    protected function setUp()
+    protected function createComponent(array $handler = [], array $processor = [])
     {
-        $this->component = new MonologComponent([
+        return new MonologComponent([
             'main' => [
-                'handler' => [],
+                'handler' => $handler,
+                'processor' => $processor,
             ],
         ]);
     }
 
     /**
-     * Returns channel configuration.
-     *
-     * @param array $handler   Handlers configuration
-     * @param array $processor Processors configuration
-     *
-     * @return array Channel configuration
+     * @expectedException \Mero\Monolog\Exception\LoggerNotFoundException
      */
-    protected function getChannelConfig(array $handler = [], array $processor = [])
+    public function testLoggerNotFoundException()
     {
-        return [
-            'handler' => $handler,
-            'processor' => $processor,
-        ];
+        $component = $this->createComponent();
+        $component->getLogger('test_channel');
+    }
+
+    public function testHasLoggerMethod()
+    {
+        $component = $this->createComponent();
+        $this->assertEquals($component->hasLogger('main'), true);
+    }
+
+    public function testCreateChannel()
+    {
+        $component = $this->createComponent();
+        $component->createChannel('test', [
+            'handler' => [],
+        ]);
+        $logger = $component->getLogger('test');
+        $this->assertEquals($logger instanceof Logger, true);
     }
 
     /**
-     * @expectedException \Mero\Monolog\Exception\HandlerNotFoundException
+     * @expectedException \Mero\Monolog\Exception\LoggerNotFoundException
      */
-    public function testInvalidHandler()
+    public function testCloseChannel()
     {
-        $this->component->closeChannel('main');
-        $this->component->createChannel(
-            'main',
-            $this->getChannelConfig([
-                'invalid_parameter',
-            ])
-        );
-    }
-
-    public function dataProviderInsufficientParameters()
-    {
-        return [
-            [
-                [
-                    'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
-                ],
-                [
-                    'type' => 'stream',
-                ],
-                [
-                    'type' => 'gelf',
-                ],
-                [
-                    'type' => 'rotating_file',
-                    'max_files' => 5,
-                ],
-                [
-                    'type' => 'stream',
-                ],
-                [
-                    'type' => 'yii_db',
-                    'table' => 'logs',
-                ],
-                [
-                    'type' => 'yii_mongo',
-                    'collection' => 'logs',
-                ],
-                [
-                    'type' => 'hipchat',
-                    'token' => 'XXXX',
-                ],
-                [
-                    'type' => 'hipchat',
-                    'room' => 'XXXX',
-                ],
-                [
-                    'type' => 'slack',
-                    'token' => 'XXXX',
-                ],
-                [
-                    'type' => 'slack',
-                    'channel' => 'XXXX',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderInsufficientParameters
-     * @expectedException \Mero\Monolog\Exception\ParameterNotFoundException
-     */
-    public function testInsufficientParameters(array $config)
-    {
-        $this->component->closeChannel('main');
-        $this->component->createChannel(
-            'main',
-            $this->getChannelConfig([
-                $config,
-            ])
-        );
+        $component = $this->createComponent();
+        $component->createChannel('test', [
+            'handler' => [],
+        ]);
+        $component->closeChannel('test');
+        $component->getLogger('test');
     }
 }
