@@ -2,27 +2,13 @@
 
 namespace Mero\Monolog;
 
-use Mero\Monolog\Exception\InsufficientParametersException;
-use Mero\Monolog\Exception\InvalidHandlerException;
+use Mero\Monolog\Exception\HandlerNotFoundException;
 use Mero\Monolog\Exception\LoggerNotFoundException;
-use Mero\Monolog\Handler\YiiDbHandler;
-use Mero\Monolog\Handler\YiiMongoHandler;
-
+use Mero\Monolog\Handler\Strategy;
 use Monolog\Formatter\FormatterInterface;
-
 use Monolog\Handler\AbstractHandler;
-use Monolog\Handler\BrowserConsoleHandler;
-use Monolog\Handler\ChromePHPHandler;
-use Monolog\Handler\FirePHPHandler;
-use Monolog\Handler\GelfHandler;
-use Monolog\Handler\HipChatHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Handler\SlackHandler;
-use Monolog\Handler\StreamHandler;
-
 use yii\base\Component;
 use Monolog\Logger;
-use yii\di\Instance;
 
 /**
  * MonologComponent is an component for the Monolog library.
@@ -36,24 +22,30 @@ class MonologComponent extends Component
      */
     protected $channels;
 
+    /**
+     * @var Strategy Handler strategy to create factory
+     */
+    protected $strategy;
+
     public function __construct(array $channels = [], array $config = [])
     {
         if (!isset($channels['main'])) {
-            $channel['main'] = [
+            $channels['main'] = [
                 'handler' => [
                     [
                         'type' => 'rotating_file',
-                        'path' => '@app/runtime/logs/log_' . date('Y-m-d') . '.log',
+                        'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
                     ],
                 ],
             ];
         }
         $this->channels = $channels;
+        $this->strategy = new Strategy();
         parent::__construct($config);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -66,11 +58,11 @@ class MonologComponent extends Component
     /**
      * Create a logger channel.
      *
-     * @param string $name Logger channel name
-     * @param array $config Logger channel configuration
+     * @param string $name   Logger channel name
+     * @param array  $config Logger channel configuration
      *
      * @throws \InvalidArgumentException When the channel already exists
-     * @throws InvalidHandlerException   When a handler configuration is invalid
+     * @throws HandlerNotFoundException  When a handler configuration is invalid
      */
     public function createChannel($name, array $config)
     {
@@ -79,7 +71,7 @@ class MonologComponent extends Component
         if (!empty($config['handler']) && is_array($config['handler'])) {
             foreach ($config['handler'] as $handler) {
                 if (!is_array($handler) && !$handler instanceof AbstractHandler) {
-                    throw new InvalidHandlerException();
+                    throw new HandlerNotFoundException();
                 }
                 if (is_array($handler)) {
                     $handlerObject = $this->createHandlerInstance($handler);
@@ -98,15 +90,16 @@ class MonologComponent extends Component
             $processors = $config['processor'];
         }
         $this->openChannel($name, $handlers, $processors);
+
         return;
     }
 
     /**
      * Open a new logger channel.
      *
-     * @param string $name Logger channel name
-     * @param array $handlers Handlers collection
-     * @param array $processors Processors collection
+     * @param string $name       Logger channel name
+     * @param array  $handlers   Handlers collection
+     * @param array  $processors Processors collection
      */
     protected function openChannel($name, array $handlers, array $processors)
     {
@@ -115,6 +108,7 @@ class MonologComponent extends Component
         }
 
         $this->channels[$name] = new Logger($name, $handlers, $processors);
+
         return;
     }
 
@@ -128,6 +122,7 @@ class MonologComponent extends Component
         if (isset($this->channels[$name])) {
             unset($this->channels[$name]);
         }
+
         return;
     }
 
@@ -137,211 +132,12 @@ class MonologComponent extends Component
      * @param array $config Configuration parameters
      *
      * @return AbstractHandler
-     *
-     * @throws InsufficientParametersException
      */
     protected function createHandlerInstance(array $config)
     {
-        if (!isset($handler['type'])) {
-            throw new InsufficientParametersException("Parameter 'type' not found");
-        }
-        $config['level'] = !isset($config['level'])
-            ? Logger::DEBUG
-            : Logger::toMonologLevel($config['level']);
-        switch ($config['type']) {
-            case 'stream':
-                if (!isset($config['path'])) {
-                    throw new InsufficientParametersException("Stream config 'path' has not been set");
-                }
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
+        $factory = $this->strategy->createFactory($config);
 
-                return new StreamHandler(\Yii::getAlias($config['path']), $config['level'], $config['bubble']);
-            case 'firephp':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new FirePHPHandler($config['level'], $config['bubble']);
-            case 'browser_console':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new BrowserConsoleHandler($config['level'], $config['bubble']);
-            case 'gelf':
-                if (!isset($config['publisher'])) {
-                    throw new InsufficientParametersException("Gelf config 'publisher' has not been set");
-                }
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new GelfHandler($config['publisher'], $config['level'], $config['bubble']);
-            case 'chromephp':
-                $config = array_merge(
-                    ['bubble' => true],
-                    $config
-                );
-
-                return new ChromePHPHandler($config['level'], $config['bubble']);
-            case 'rotating_file':
-                if (!isset($config['path'])) {
-                    throw new InsufficientParametersException("Rotating file config 'path' has not been set");
-                }
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'max_files' => 0,
-                        'file_permission' => null,
-                        'filename_format' => '{filename}-{date}',
-                        'date_format' => 'Y-m-d',
-                    ],
-                    $config
-                );
-                $handler = new RotatingFileHandler(
-                    \Yii::getAlias($config['path']),
-                    $config['max_files'],
-                    $config['level'],
-                    $config['bubble'],
-                    $config['file_permission']
-                );
-                $handler->setFilenameFormat($config['filename_format'], $config['date_format']);
-
-                return $handler;
-            case 'yii_db':
-                if (!isset($config['reference'])) {
-                    throw new InsufficientParametersException("Database config 'reference' has not been set");
-                }
-                $dbInstance = Instance::ensure($config['reference'], '\yii\db\Connection');
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'table' => 'logs',
-                    ],
-                    $config
-                );
-
-                return new YiiDbHandler(
-                    $dbInstance,
-                    $config['table'],
-                    $config['level'],
-                    $config['bubble']
-                );
-            case 'yii_mongo':
-                if (!isset($config['reference'])) {
-                    throw new InsufficientParametersException("Mongo config 'reference' has not been set");
-                }
-                $mongoInstance = Instance::ensure($config['reference'], '\yii\mongodb\Connection');
-                $config = array_merge(
-                    [
-                        'bubble' => true,
-                        'collection' => 'logs',
-                    ],
-                    $config
-                );
-
-                return new YiiMongoHandler(
-                    $mongoInstance,
-                    $config['collection'],
-                    $config['level'],
-                    $config['bubble']
-                );
-            case 'hipchat':
-                if (!isset($config['token'])) {
-                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
-                }
-                if (!isset($config['room'])) {
-                    throw new InsufficientParametersException("Hipchat config 'token' has not been set");
-                }
-                $config = array_merge(
-                    [
-                        'notify' => false,
-                        'nickname' => 'Monolog',
-                        'bubble' => true,
-                        'use_ssl' => true,
-                        'message_format' => 'text',
-                        'host' => 'api.hipchat.com',
-                        'api_version' => HipChatHandler::API_V1,
-                    ],
-                    $config
-                );
-
-                return new HipChatHandler(
-                    $config['token'],
-                    $config['room'],
-                    $config['nickname'],
-                    $config['notify'],
-                    $config['level'],
-                    $config['bubble'],
-                    $config['use_ssl'],
-                    $config['message_format'],
-                    $config['host'],
-                    $config['version']
-                );
-            case 'elasticsearch':
-            case 'fingers_crossed':
-            case 'filter':
-            case 'buffer':
-            case 'deduplication':
-            case 'group':
-            case 'whatfailuregroup':
-            case 'syslog':
-            case 'syslogudp':
-            case 'swift_mailer':
-            case 'socket':
-            case 'pushover':
-            case 'raven':
-            case 'newrelic':
-            case 'slack':
-                // Checking required parameters (token and slack channel)
-                if (!isset($config['token'])) {
-                    throw new InsufficientParametersException("Slack config 'token' has not been set");
-                }
-                if (!isset($config['channel'])) {
-                    throw new InsufficientParametersException("Slack config 'channel' has not been set");
-                }
-
-                $config = array_merge(
-                    [
-                        'username' => 'Monolog',
-                        'useAttachment' => true,
-                        'iconEmoji' => ":computer:",
-                        'bubble' => true,
-                        'useShortAttachment' => false,
-                        'includeContextAndExtra' => false,
-                    ],
-                    $config
-                );
-
-                return new SlackHandler(
-                    $config['token'],
-                    $config['channel'],
-                    $config['username'],
-                    $config['useAttachment'],
-                    $config['iconEmoji'],
-                    $config['level'],
-                    $config['bubble'],
-                    $config['useShortAttachment'],
-                    $config['includeContextAndExtra']
-                );
-            case 'cube':
-            case 'amqp':
-            case 'error_log':
-            case 'null':
-            case 'test':
-            case 'debug':
-            case 'loggly':
-            case 'logentries':
-            case 'flowdock':
-            case 'rollbar':
-                return;
-        }
+        return $factory->createHandler();
     }
 
     /**

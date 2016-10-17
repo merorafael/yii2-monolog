@@ -11,7 +11,11 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->component = new MonologComponent();
+        $this->component = new MonologComponent([
+            'main' => [
+                'handler' => [],
+            ],
+        ]);
     }
 
     /**
@@ -31,13 +35,13 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Mero\Monolog\Exception\InvalidHandlerException
+     * @expectedException \Mero\Monolog\Exception\HandlerNotFoundException
      */
     public function testInvalidHandler()
     {
-        $this->component->closeChannel('test');
+        $this->component->closeChannel('main');
         $this->component->createChannel(
-            'test',
+            'main',
             $this->getChannelConfig([
                 'invalid_parameter',
             ])
@@ -82,6 +86,10 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'type' => 'slack',
+                    'token' => 'XXXX',
+                ],
+                [
+                    'type' => 'slack',
                     'channel' => 'XXXX',
                 ],
             ],
@@ -90,13 +98,13 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderInsufficientParameters
-     * @expectedException \Mero\Monolog\Exception\InsufficientParametersException
+     * @expectedException \Mero\Monolog\Exception\ParameterNotFoundException
      */
     public function testInsufficientParameters(array $config)
     {
-        $this->component->closeChannel('test');
+        $this->component->closeChannel('main');
         $this->component->createChannel(
-            'test',
+            'main',
             $this->getChannelConfig([
                 $config,
             ])
