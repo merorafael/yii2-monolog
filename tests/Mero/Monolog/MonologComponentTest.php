@@ -31,7 +31,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Mero\Monolog\Exception\InvalidHandlerException
+     * @expectedException \Mero\Monolog\Exception\HandlerNotFoundException
      */
     public function testInvalidHandler()
     {
@@ -82,6 +82,10 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'type' => 'slack',
+                    'token' => 'XXXX',
+                ],
+                [
+                    'type' => 'slack',
                     'channel' => 'XXXX',
                 ],
             ],
@@ -90,7 +94,7 @@ class MonologComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderInsufficientParameters
-     * @expectedException \Mero\Monolog\Exception\InsufficientParametersException
+     * @expectedException \Mero\Monolog\Exception\ParameterNotFoundException
      */
     public function testInsufficientParameters(array $config)
     {
