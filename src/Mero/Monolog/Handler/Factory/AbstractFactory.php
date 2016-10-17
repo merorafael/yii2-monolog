@@ -19,6 +19,16 @@ abstract class AbstractFactory
     }
 
     /**
+     * Returns the class name.
+     *
+     * @return string Class name
+     */
+    public static function className()
+    {
+        return get_called_class();
+    }
+
+    /**
      * Check configuration parameters.
      *
      * @return bool Returns validation status
