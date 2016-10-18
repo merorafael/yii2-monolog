@@ -4,6 +4,7 @@ namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Monolog\Handler\HipChatHandler;
+use Monolog\Logger;
 
 class HipChatFactory extends AbstractFactory
 {
@@ -14,6 +15,7 @@ class HipChatFactory extends AbstractFactory
     {
         $this->config = array_merge(
             [
+                'level' => Logger::DEBUG,
                 'notify' => false,
                 'nickname' => 'Monolog',
                 'bubble' => true,

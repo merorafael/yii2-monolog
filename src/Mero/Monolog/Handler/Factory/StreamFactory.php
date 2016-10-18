@@ -4,6 +4,7 @@ namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class StreamFactory extends AbstractFactory
 {
@@ -13,7 +14,10 @@ class StreamFactory extends AbstractFactory
     protected function checkParameters()
     {
         $this->config = array_merge(
-            ['bubble' => true],
+            [
+                'level' => Logger::DEBUG,
+                'bubble' => true,
+            ],
             $this->config
         );
 

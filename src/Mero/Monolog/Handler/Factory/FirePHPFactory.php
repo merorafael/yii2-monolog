@@ -3,6 +3,7 @@
 namespace Mero\Monolog\Handler\Factory;
 
 use Monolog\Handler\FirePHPHandler;
+use Monolog\Logger;
 
 class FirePHPFactory extends AbstractFactory
 {
@@ -12,7 +13,10 @@ class FirePHPFactory extends AbstractFactory
     protected function checkParameters()
     {
         $this->config = array_merge(
-            ['bubble' => true],
+            [
+                'level' => Logger::DEBUG,
+                'bubble' => true,
+            ],
             $this->config
         );
     }

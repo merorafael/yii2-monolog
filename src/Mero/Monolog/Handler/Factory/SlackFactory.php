@@ -4,6 +4,7 @@ namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Monolog\Handler\SlackHandler;
+use Monolog\Logger;
 
 class SlackFactory extends AbstractFactory
 {
@@ -14,6 +15,7 @@ class SlackFactory extends AbstractFactory
     {
         $this->config = array_merge(
             [
+                'level' => Logger::DEBUG,
                 'username' => 'Monolog',
                 'useAttachment' => true,
                 'iconEmoji' => ':computer:',

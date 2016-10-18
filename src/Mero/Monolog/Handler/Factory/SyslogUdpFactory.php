@@ -3,10 +3,10 @@
 namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
-use Monolog\Handler\GelfHandler;
+use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Logger;
 
-class GelfFactory extends AbstractFactory
+class SyslogUdpFactory extends AbstractFactory
 {
     /**
      * {@inheritdoc}
@@ -16,12 +16,14 @@ class GelfFactory extends AbstractFactory
         $this->config = array_merge(
             [
                 'level' => Logger::DEBUG,
+                'port' => 512,
+                'facility' => LOG_USER,
                 'bubble' => true,
             ],
             $this->config
         );
 
-        $parametersRequired = ['publisher'];
+        $parametersRequired = ['host'];
         foreach ($parametersRequired as &$parameter) {
             if (!isset($this->config[$parameter])) {
                 throw new ParameterNotFoundException(
@@ -36,8 +38,10 @@ class GelfFactory extends AbstractFactory
      */
     public function createHandler()
     {
-        return new GelfHandler(
-            $this->config['publisher'],
+        return new SyslogUdpHandler(
+            $this->config['host'],
+            $this->config['port'],
+            $this->config['facility'],
             $this->config['level'],
             $this->config['bubble']
         );

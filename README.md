@@ -115,36 +115,8 @@ return [
 ];
 ```
 
-**Warning:** this option does not have any existing handlers in monolog.
-
-**Handlers supported:**
-
-- stream
-- firephp
-- browser_console
-- gelf
-- chromephp
-- rotating_file
-- yii_db
-
-```php
-return [
-    //...
-    'handler' => [
-        [
-            'type' => 'yii_db',
-            'table' => 'my_custom_logs',                        // target DB name
-            'additional_fields' => ['context', 'extra'],        // Extra columns added/removed dynamically
-            'level' => 'debug'
-        ]
-    ],
-    //...
-];
-```
-
-- yii_mongo
-- hipchat
-- slack
+**Warning:** this option does not have any existing handlers in monolog. See the [handlers page](docs/handlers.md)
+more details.
 
 ### Object structure
 
@@ -164,8 +136,6 @@ return [
     //...
 ];
 ```
-
-See the [official documentation](https://github.com/Seldaek/monolog/blob/master/doc/02-handlers-formatters-processors.md#handlers) of Monolog to see the handlers list.
 
 Using Yii2 Monolog
 ------------------
@@ -206,4 +176,3 @@ class ExampleController extends Controller
     
 }
 ```
-
