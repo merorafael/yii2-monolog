@@ -4,6 +4,7 @@ namespace Mero\Monolog\Handler\Factory;
 
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Mero\Monolog\Handler\YiiDbHandler;
+use Monolog\Logger;
 use yii\di\Instance;
 
 class YiiDbFactory extends AbstractFactory
@@ -15,6 +16,7 @@ class YiiDbFactory extends AbstractFactory
     {
         $this->config = array_merge(
             [
+                'level' => Logger::DEBUG,
                 'bubble' => true,
                 'table' => 'logs',
             ],

@@ -16,7 +16,7 @@ como configura-lo.
 
 | Nome do campo  | Descrição                                               |
 | -------------  | ------------------------------------------------------- |
-| class          | `\Mero\Monolog\Target\MonologTarget::class`             |
+| class          | `\Mero\Monolog\Target\MonologTarget::className()`       |
 | component_name | Nome do component referênte ao monolog                  |
 | channel        | Canal no qual será registrado os logs(default `main`)   |
 | levels         | Leveis de log do Yii2 que serão enviados para o Monolog |
@@ -30,7 +30,7 @@ return [
         // ...
         'log' => [
             'targets' => [
-                'class' => \Mero\Monolog\Target\MonologTarget::class,
+                'class' => \Mero\Monolog\Target\MonologTarget::className(),
                 'component_name' => 'monolog',
                 'channel' => 'main',
                 'levels' => ['error', 'warning', 'info'],
@@ -54,7 +54,7 @@ level de logs do Unix, os mesmos levels utilizados pelo padrão `PSR-3`.
 Segue abaixo uma tabela na qual representa a interpretação do level de log no Yii2
 para seu respectivo correspondente no Monolog.
 
-| Level no Yii2 | Level no Monolog |
+| Yii2 Level    | Monolog level    |
 | ------------- | ---------------- |
 | trace         | debug            |
 | profile_begin | debug            |
