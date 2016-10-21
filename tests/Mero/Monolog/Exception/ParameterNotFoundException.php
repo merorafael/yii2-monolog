@@ -4,7 +4,6 @@ namespace Mero\Monolog\Exception;
 
 class ParameterNotFoundException extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @expectedException \Mero\Monolog\Exception\ParameterNotFoundException
      */
@@ -12,5 +11,4 @@ class ParameterNotFoundException extends \PHPUnit_Framework_TestCase
     {
         throw new LoggerNotFoundException();
     }
-
 }
