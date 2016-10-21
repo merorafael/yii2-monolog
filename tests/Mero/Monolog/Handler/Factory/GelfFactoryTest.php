@@ -26,4 +26,29 @@ class GelfFactoryTest extends \PHPUnit_Framework_TestCase
     {
         new GelfFactory($params);
     }
+
+    public function testCreateHandler()
+    {
+        $handlerMock = $this->getMockBuilder('Monolog\Handler\GelfHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $factoryMock = $this->getMockBuilder(GelfFactory::className())
+            ->setConstructorArgs([
+                [
+                    'type' => 'gelf',
+                    'publisher' => 'XXXXX',
+                    'level' => Logger::DEBUG,
+                ],
+            ])
+            ->setMethods(['createHandler'])
+            ->getMock();
+
+        $factoryMock
+            ->expects($this->any())
+            ->method('createHandler')
+            ->will($this->returnValue($handlerMock));
+
+        $factoryMock->createHandler();
+    }
 }
