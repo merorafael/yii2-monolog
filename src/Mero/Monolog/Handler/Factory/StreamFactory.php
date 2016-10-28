@@ -39,6 +39,7 @@ class StreamFactory extends AbstractFactory
         if (class_exists('\Yii')) {
             $this->config['path'] = \Yii::getAlias($this->config['path']);
         }
+
         return new StreamHandler(
             $this->config['path'],
             $this->config['level'],
