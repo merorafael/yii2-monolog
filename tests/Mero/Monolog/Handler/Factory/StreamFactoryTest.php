@@ -26,4 +26,15 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
     {
         new StreamFactory($params);
     }
+
+    public function testCreateHandler()
+    {
+        $factory = new StreamFactory([
+            'type' => 'stream',
+            'path' => 'test',
+            'level' => Logger::DEBUG,
+        ]);
+        $handler = $factory->createHandler();
+        $this->assertInstanceOf('Monolog\Handler\StreamHandler', $handler);
+    }
 }

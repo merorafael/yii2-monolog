@@ -26,4 +26,15 @@ class SyslogFactoryTest extends \PHPUnit_Framework_TestCase
     {
         new SyslogFactory($params);
     }
+
+    public function testCreateHandler()
+    {
+        $factory = new SyslogFactory([
+            'type' => 'syslog',
+            'ident' => 'test',
+            'level' => Logger::DEBUG,
+        ]);
+        $handler = $factory->createHandler();
+        $this->assertInstanceOf('Monolog\Handler\SyslogHandler', $handler);
+    }
 }
