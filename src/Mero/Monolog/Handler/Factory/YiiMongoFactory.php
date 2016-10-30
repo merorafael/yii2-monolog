@@ -5,7 +5,9 @@ namespace Mero\Monolog\Handler\Factory;
 use Mero\Monolog\Exception\ParameterNotFoundException;
 use Mero\Monolog\Handler\YiiMongoHandler;
 use Monolog\Logger;
+use yii\base\InvalidConfigException;
 use yii\di\Instance;
+use yii\mongodb\Connection;
 
 class YiiMongoFactory extends AbstractFactory
 {
@@ -31,6 +33,22 @@ class YiiMongoFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
+    }
+
+    /**
+     * Return a Yii2 database connection.
+     *
+     * @param string $reference Name of Yii2 database connection
+     *
+     * @return Connection
+     *
+     * @throws InvalidConfigException When the reference is invalid
+     */
+    protected function getYiiConnection($reference)
+    {
+        return Instance::ensure($reference, Connection::className());
     }
 
     /**
@@ -38,10 +56,8 @@ class YiiMongoFactory extends AbstractFactory
      */
     public function createHandler()
     {
-        $dbInstance = Instance::ensure($this->config['reference'], '\yii\db\Connection');
-
         return new YiiMongoHandler(
-            $dbInstance,
+            $this->getYiiConnection($this->config['reference']),
             $this->config['collection'],
             $this->config['level'],
             $this->config['bubble']

@@ -23,6 +23,14 @@ class YiiDbHandler extends AbstractProcessingHandler
      */
     protected $table;
 
+    /**
+     * YiiDbHandler constructor.
+     *
+     * @param Connection $db     Yii2 database connection instance
+     * @param string     $table  Name of log table
+     * @param int        $level  The minimum logging level at which this handler will be triggered
+     * @param bool       $bubble Whether the messages that are handled can bubble up the stack or not
+     */
     public function __construct($db, $table = 'logs', $level = Logger::DEBUG, $bubble = true)
     {
         if (!($db instanceof Connection)) {

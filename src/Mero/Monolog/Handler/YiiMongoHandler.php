@@ -21,7 +21,12 @@ class YiiMongoHandler extends AbstractProcessingHandler
     protected $collection;
 
     /**
-     * {@inheritdoc}
+     * YiiMongoHandler constructor.
+     *
+     * @param Connection $db         Yii2 mongodb connection
+     * @param bool       $collection Name of log collection
+     * @param int        $level      The minimum logging level at which this handler will be triggered
+     * @param bool       $bubble     Whether the messages that are handled can bubble up the stack or not
      */
     public function __construct($db, $collection, $level = Logger::DEBUG, $bubble = true)
     {
