@@ -41,7 +41,7 @@ class RotatingFileFactory extends AbstractFactory
     public function createHandler()
     {
         $handler = new RotatingFileHandler(
-            \Yii::getAlias($this->config['path']),
+            Yii::getAlias($this->config['path']),
             $this->config['max_files'],
             $this->config['level'],
             $this->config['bubble'],

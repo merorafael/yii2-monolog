@@ -26,4 +26,25 @@ class RotatingFileFactoryTest extends \PHPUnit_Framework_TestCase
     {
         new RotatingFileFactory($params);
     }
+
+    public function testCreateHandler()
+    {
+        $factory = new RotatingFileFactory([
+            'type' => 'rotating_file',
+            'path' => 'test',
+            'level' => Logger::DEBUG,
+        ]);
+        $handler = $factory->createHandler();
+        $this->assertInstanceOf('Monolog\Handler\RotatingFileHandler', $handler);
+    }
+}
+
+if (!class_exists(__NAMESPACE__.'\Yii')) {
+    class Yii
+    {
+        public static function getAlias($alias)
+        {
+            return $alias;
+        }
+    }
 }

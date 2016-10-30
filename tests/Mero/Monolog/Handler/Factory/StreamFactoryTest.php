@@ -38,3 +38,13 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Monolog\Handler\StreamHandler', $handler);
     }
 }
+
+if (!class_exists(__NAMESPACE__.'\Yii')) {
+    class Yii
+    {
+        public static function getAlias($alias)
+        {
+            return $alias;
+        }
+    }
+}

@@ -36,12 +36,8 @@ class StreamFactory extends AbstractFactory
      */
     public function createHandler()
     {
-        if (class_exists('\Yii')) {
-            $this->config['path'] = \Yii::getAlias($this->config['path']);
-        }
-
         return new StreamHandler(
-            $this->config['path'],
+            Yii::getAlias($this->config['path']),
             $this->config['level'],
             $this->config['bubble']
         );
