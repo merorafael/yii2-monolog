@@ -24,6 +24,6 @@ class SyslogUdpFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testParameterNotFound(array $params)
     {
-        new SyslogFactory($params);
+        new SyslogUdpFactory($params);
     }
 }
