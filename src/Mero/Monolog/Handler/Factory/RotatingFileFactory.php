@@ -33,6 +33,8 @@ class RotatingFileFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

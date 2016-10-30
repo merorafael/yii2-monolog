@@ -29,6 +29,8 @@ class GelfFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

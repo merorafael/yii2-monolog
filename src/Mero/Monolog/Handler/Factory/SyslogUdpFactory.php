@@ -31,6 +31,8 @@ class SyslogUdpFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

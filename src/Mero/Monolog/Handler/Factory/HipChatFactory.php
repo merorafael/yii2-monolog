@@ -35,6 +35,8 @@ class HipChatFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

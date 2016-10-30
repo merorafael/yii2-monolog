@@ -19,6 +19,8 @@ class FirePHPFactory extends AbstractFactory
             ],
             $this->config
         );
+
+        return;
     }
 
     /**

@@ -29,6 +29,8 @@ class StreamFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

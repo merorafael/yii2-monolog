@@ -29,6 +29,8 @@ class SocketFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

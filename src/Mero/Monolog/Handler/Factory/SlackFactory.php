@@ -34,6 +34,8 @@ class SlackFactory extends AbstractFactory
                 );
             }
         }
+
+        return;
     }
 
     /**

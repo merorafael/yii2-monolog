@@ -19,6 +19,8 @@ class ChromePHPFactory extends AbstractFactory
             ],
             $this->config
         );
+
+        return;
     }
 
     /**

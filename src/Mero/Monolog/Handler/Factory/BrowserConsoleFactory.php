@@ -19,6 +19,8 @@ class BrowserConsoleFactory extends AbstractFactory
             ],
             $this->config
         );
+
+        return;
     }
 
     /**
