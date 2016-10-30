@@ -2,6 +2,7 @@
 
 namespace Mero\Monolog\Handler;
 
+use Mero\Monolog\Handler\Factory\StreamFactory;
 use Monolog\Logger;
 
 class StrategyTest extends \PHPUnit_Framework_TestCase
@@ -14,6 +15,25 @@ class StrategyTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->strategy = new Strategy();
+    }
+
+    public function testCreateFactory()
+    {
+        $factory = $this->strategy->createFactory([
+            'type' => 'stream',
+            'path' => '@app/runtime/logs/log_'.date('Y-m-d').'.log',
+        ]);
+        $this->assertInstanceOf(StreamFactory::className(), $factory);
+    }
+
+    /**
+     * @expectedException \Mero\Monolog\Exception\HandlerNotFoundException
+     */
+    public function testHandlerNotFound()
+    {
+        $this->strategy->createFactory([
+            'type' => 'invalid_type',
+        ]);
     }
 
     public function dataProviderHandlerNotImplemented()
