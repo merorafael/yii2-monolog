@@ -33,7 +33,7 @@ return [
     //....
     'components' => [
         'monolog' => [
-            'class' => \Mero\Monolog\MonologComponent::class,
+            'class' => '\Mero\Monolog\MonologComponent',
             'channels' => [
                 'main' => [
                     'handler' => [
@@ -160,7 +160,7 @@ class ExampleController extends Controller
      */
     public function actionFirstExample()
     {
-        $monologComponent = Yii::app()->monolog;
+        $monologComponent = Yii::$app->monolog;
         $logger = $monologComponent->getLogger();
         $logger->log('info', 'Hello world');
     }
@@ -170,7 +170,7 @@ class ExampleController extends Controller
      */
     public function actionSecondExample()
     {
-        $monologComponent = Yii::app()->monolog;
+        $monologComponent = Yii::$app->monolog;
         $logger = $monologComponent->getLogger("channel1");
         $logger->log('info', 'Hello world');
     }
